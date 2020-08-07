@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+
+import { StylesProvider } from '@material-ui/core';
+import { CookiesProvider } from 'react-cookie';
+
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <StylesProvider injectFirst>
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
+    </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
