@@ -6,6 +6,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import createTheme from 'src/app.theme';
 
 import useDarkTheme from './theme.hooks';
+import AppBar from './AppBar';
 
 // Props
 export interface AppThemeProps {
@@ -13,7 +14,7 @@ export interface AppThemeProps {
 }
 
 // Component
-const AppTheme = ({ children }: AppThemeProps) => {
+const AppLayout = ({ children }: AppThemeProps) => {
   // Theme
   const { prefersDark } = useDarkTheme();
   const theme = useMemo(() => createTheme(prefersDark), [prefersDark]);
@@ -22,9 +23,11 @@ const AppTheme = ({ children }: AppThemeProps) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      { children }
+      <AppBar>
+        { children }
+      </AppBar>
     </ThemeProvider>
   );
 };
 
-export default AppTheme;
+export default AppLayout;

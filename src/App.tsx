@@ -1,12 +1,12 @@
 import React from 'react';
 
-import AppTheme from 'src/layout/AppTheme';
+import AppLayout from 'src/layout/AppLayout';
 
 // Component
 const App = () => (
-  <AppTheme>
+  <AppLayout>
     <p>Toto !</p>
-  </AppTheme>
+  </AppLayout>
 );
 
 export default App;
