@@ -1,6 +1,8 @@
-import React, { FC } from 'react';
+import React, { CSSProperties, FC, useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
+
+import { BIOMES, BiomeName } from 'src/biomes';
 
 // Styles
 const useStyles = makeStyles({
@@ -11,7 +13,7 @@ const useStyles = makeStyles({
 
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }
 });
 
@@ -20,19 +22,30 @@ export interface TileProps {
   x: number;
   y: number;
   z?: number;
+  biome: BiomeName;
 }
 
 // Component
 const Tile: FC<TileProps> = (props) => {
   // Props
-  const { x, y, z = 0 } = props;
+  const {
+    x, y, z = 0,
+    biome
+  } = props;
+
+  // Memo
+  const style = useMemo<CSSProperties>(() => ({
+    left:   x * 64 - 32,
+    bottom: y * 64 - 32,
+    zIndex: z,
+    backgroundImage: `url(${BIOMES[biome].floor})`
+  }), [x, y, z, biome]);
 
   // Render
   const styles = useStyles();
 
   return (
-    <div className={styles.tile} style={{ bottom: y * 64 - 32, left: x * 64 - 32, zIndex: z }}>
-      <span>Tile</span>
+    <div className={styles.tile} style={style}>
     </div>
   );
 };

@@ -39,16 +39,16 @@ const Map: FC<MapProps> = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.map} style={{ transform: `translate(${-center.x * 64}px, ${center.y * 64}px)`}}>
-        <Tile x={0} y={0} />
-        <Tile x={1} y={0} />
-        <Tile x={2} y={0} />
-        <Tile x={0} y={1} />
-        <Tile x={1} y={1} />
-        <Tile x={2} y={1} />
-        <Tile x={0} y={2} />
-        <Tile x={1} y={2} />
-        <Tile x={2} y={2} />
-        <Tile x={5} y={1} />
+        <Tile x={0} y={0} biome='rock' />
+        <Tile x={1} y={0} biome='rock' />
+        <Tile x={2} y={0} biome='rock' />
+        <Tile x={0} y={1} biome='rock' />
+        <Tile x={1} y={1} biome='rock' />
+        <Tile x={2} y={1} biome='rock' />
+        <Tile x={0} y={2} biome='rock' />
+        <Tile x={1} y={2} biome='rock' />
+        <Tile x={2} y={2} biome='rock' />
+        <Tile x={5} y={1} biome='rock' />
       </div>
     </div>
   );
