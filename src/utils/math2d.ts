@@ -4,6 +4,8 @@ export interface Vector {
   y: number;
 }
 
+export type VectorCompareMode = 'xy' | 'yx';
+
 // Constants
 export const NULL_VECTOR = { x: 0, y: 0 };
 
@@ -54,5 +56,15 @@ export const Math2D = {
       x: u.x / k,
       y: u.y / k
     };
+  },
+
+  compare(u: Vector, v: Vector, mode: VectorCompareMode = 'xy'): number {
+    const d = this.sub(v, u);
+
+    if (mode === 'xy') {
+      return d.x === 0 ? d.y : d.x;
+    } else {
+      return d.y === 0 ? d.x : d.y;
+    }
   }
 }
