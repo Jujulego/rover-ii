@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { Layer } from 'src/maps/layer';
+import { Layer, Tile as TileData } from 'src/maps/layer';
 
 import LayerContainer, { LayerContainerProps } from './LayerContainer';
 import Tile from './Tile';
@@ -8,12 +8,14 @@ import Tile from './Tile';
 // Props
 export interface MapProps extends Omit<LayerContainerProps, 'size'> {
   layer: Layer;
+  onTileClick?: (tile: TileData) => void;
 }
 
 // Component
 const Map: FC<MapProps> = (props) => {
   const {
     layer,
+    onTileClick,
     ...container
   } = props;
 
@@ -26,6 +28,7 @@ const Map: FC<MapProps> = (props) => {
           y={tile.pos.y}
           h={64} w={64}
           biome={tile.biome}
+          onClick={onTileClick && (() => onTileClick(tile))}
         />
       )) }
     </LayerContainer>

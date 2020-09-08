@@ -5,8 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { NULL_VECTOR, Vector } from 'src/utils/math2d';
 
 // Styles
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles(({ palette, transitions }) => ({
   container: {
+    display: 'flex',
     height: '100%',
     width: '100%',
 
@@ -14,7 +15,12 @@ const useStyles = makeStyles(({ palette }) => ({
     overflow: 'hidden'
   },
   map: {
-    position: 'relative'
+    position: 'relative',
+    height: 0,
+    width: 0,
+    margin: 'auto',
+
+    transition: transitions.create('transform', { duration: transitions.duration.complex })
   }
 }));
 

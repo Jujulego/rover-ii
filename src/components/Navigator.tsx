@@ -24,14 +24,14 @@ const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
     height: 100,
     width: 100,
 
-    cursor: 'pointer',
-    boxShadow: shadows[2],
     borderRadius: 50,
+    boxShadow: shadows[2],
+    cursor: 'pointer',
     overflow: 'hidden',
 
     transition: transitions.create(
       ['top', 'right', 'height', 'width', 'border-radius'],
-      { duration: 600 }
+      { duration: transitions.duration.complex }
     ),
 
     '&.open': {
@@ -67,7 +67,10 @@ const Navigator: FC<NavigatorProps> = (props) => {
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.map}>
-        <Map center={center} layer={layer} />
+        <Map
+          center={center} layer={layer}
+          onTileClick={tile => setCenter(tile.pos)}
+        />
       </div>
 
       <div

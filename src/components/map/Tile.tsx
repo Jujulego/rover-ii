@@ -16,15 +16,16 @@ export interface TileProps {
   x: number; y: number;
   h: number; w: number;
   biome: BiomeName;
+  onClick?: () => void;
 }
 
 // Component
 const Tile: FC<TileProps> = (props) => {
   // Props
   const {
-    x, y,
-    h, w,
-    biome
+    x, y, h, w,
+    biome,
+    onClick
   } = props;
 
   // Memo
@@ -40,7 +41,7 @@ const Tile: FC<TileProps> = (props) => {
   const styles = useStyles();
 
   return (
-    <div className={styles.tile} style={style} />
+    <div className={styles.tile} style={style} onClick={onClick} />
   );
 };
 
