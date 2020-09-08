@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
-import { Layer, Tile as TileData } from 'src/maps/layer';
+import { Vector } from 'src/utils/math2d';
+import { Layer } from 'src/maps/layer';
 
 import LayerContainer, { LayerContainerProps } from './LayerContainer';
 import Tile from './Tile';
@@ -8,7 +9,7 @@ import Tile from './Tile';
 // Props
 export interface MapProps extends Omit<LayerContainerProps, 'size'> {
   layer: Layer;
-  onTileClick?: (tile: TileData) => void;
+  onTileClick?: (tile: Vector) => void;
 }
 
 // Component
@@ -28,7 +29,7 @@ const Map: FC<MapProps> = (props) => {
           y={tile.pos.y}
           h={64} w={64}
           biome={tile.biome}
-          onClick={onTileClick && (() => onTileClick(tile))}
+          onClick={onTileClick}
         />
       )) }
     </LayerContainer>

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,7 +31,7 @@ const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
 
     transition: transitions.create(
       ['top', 'right', 'height', 'width', 'border-radius'],
-      { duration: transitions.duration.complex }
+      { duration: transitions.duration.standard * 2 }
     ),
 
     '&.open': {
@@ -61,6 +61,12 @@ const Navigator: FC<NavigatorProps> = (props) => {
   const [center, setCenter] = useState({ x: 0, y: 0 });
   const [openMiniMap, setOpenMiniMap] = useState(false);
 
+  // Callbacks
+  const handleToggleMiniMap = useCallback(
+    () => setOpenMiniMap(open => !open),
+    [setOpenMiniMap]
+  );
+
   // Render
   const styles = useStyle();
 
@@ -69,13 +75,13 @@ const Navigator: FC<NavigatorProps> = (props) => {
       <div className={styles.map}>
         <Map
           center={center} layer={layer}
-          onTileClick={tile => setCenter(tile.pos)}
+          onTileClick={setCenter}
         />
       </div>
 
       <div
         className={clsx(styles.miniMap, { open: openMiniMap })}
-        onClick={() => setOpenMiniMap(!openMiniMap)}
+        onClick={handleToggleMiniMap}
       >
         <MiniMap center={center} layer={layer} />
       </div>
