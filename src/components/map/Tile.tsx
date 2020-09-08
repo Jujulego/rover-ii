@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -34,7 +34,7 @@ const Tile: FC<TileProps> = (props) => {
   } = props;
 
   // Memo
-  const style = useMemo<CSSProperties>(() => ({
+  const style = useMemo(() => ({
     left:   x * 64 - 32,
     bottom: y * 64 - 32,
     zIndex: z,

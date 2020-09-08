@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Tile from 'src/components/map/Tile';
+import { NULL_VECTOR, Vector } from 'src/utils/math2d';
 
 // Styles
 const useStyles = makeStyles({
@@ -21,16 +22,13 @@ const useStyles = makeStyles({
 
 // Props
 export interface MapProps {
-  center?: {
-    x: number,
-    y: number
-  }
+  center?: Vector
 }
 
 // Component
 const Map: FC<MapProps> = (props) => {
   const {
-    center = { x: 0, y: 0 }
+    center = NULL_VECTOR
   } = props;
 
   // Render
