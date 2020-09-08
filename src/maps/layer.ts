@@ -78,4 +78,14 @@ export class Layer {
   get(pos: Vector): Tile | null {
     return sfind(this.tiles, (tile) => this.compareVector(tile.pos, pos)) || null;
   }
+
+  // Properties
+  get bbox() {
+    return {
+      t: Math.min(...this.tiles.map(t => t.pos.y)),
+      r: Math.max(...this.tiles.map(t => t.pos.x)),
+      b: Math.max(...this.tiles.map(t => t.pos.y)),
+      l: Math.min(...this.tiles.map(t => t.pos.x))
+    }
+  }
 }

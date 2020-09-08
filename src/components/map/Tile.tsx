@@ -7,21 +7,14 @@ import { BIOMES, BiomeName } from 'src/biomes';
 // Styles
 const useStyles = makeStyles({
   tile: {
-    position: 'absolute',
-    height: 64,
-    width: 64,
-
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'absolute'
   }
 });
 
 // Types
 export interface TileProps {
-  x: number;
-  y: number;
-  z?: number;
+  x: number; y: number;
+  h: number; w: number;
   biome: BiomeName;
 }
 
@@ -29,24 +22,25 @@ export interface TileProps {
 const Tile: FC<TileProps> = (props) => {
   // Props
   const {
-    x, y, z = 0,
+    x, y,
+    h, w,
     biome
   } = props;
 
   // Memo
   const style = useMemo(() => ({
-    left:   x * 64 - 32,
-    bottom: y * 64 - 32,
-    zIndex: z,
+    height: h,
+    width:  w,
+    left:   x * w,
+    top:    y * h,
     backgroundImage: `url(${BIOMES[biome].floor})`
-  }), [x, y, z, biome]);
+  }), [x, y, h, w, biome]);
 
   // Render
   const styles = useStyles();
 
   return (
-    <div className={styles.tile} style={style}>
-    </div>
+    <div className={styles.tile} style={style} />
   );
 };
 
