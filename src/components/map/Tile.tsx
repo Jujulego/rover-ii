@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -19,18 +19,19 @@ const useStyles = makeStyles({
 export interface TileProps {
   x: number;
   y: number;
+  z?: number;
 }
 
 // Component
-const Tile = (props: TileProps) => {
+const Tile: FC<TileProps> = (props) => {
   // Props
-  const { x, y } = props;
+  const { x, y, z = 0 } = props;
 
   // Render
   const styles = useStyles();
 
   return (
-    <div className={styles.tile} style={{ bottom: y * 64, left: x * 64 }}>
+    <div className={styles.tile} style={{ bottom: y * 64 - 32, left: x * 64 - 32, zIndex: z }}>
       <span>Tile</span>
     </div>
   );

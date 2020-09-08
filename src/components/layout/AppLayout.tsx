@@ -5,8 +5,8 @@ import { ThemeProvider } from '@material-ui/core/styles';
 
 import createTheme from 'src/app.theme';
 
-import useDarkTheme from './theme.hooks';
-import AppBar from './AppBar';
+import useDarkTheme from 'src/components/layout/theme.hooks';
+import AppBar from 'src/components/layout/AppBar';
 
 // Props
 export interface AppThemeProps {

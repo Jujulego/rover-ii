@@ -2,8 +2,8 @@ import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import AppLayout from './layout/AppLayout';
-import Map from './map/Map';
+import AppLayout from './components/layout/AppLayout';
+import Map from './components/map/Map';
 
 // Styles
 const useStyle = makeStyles({
@@ -20,7 +20,7 @@ const App = () => {
   return (
     <AppLayout>
       <section className={styles.map}>
-        <Map/>
+        <Map center={{ x: 5, y: 1 }} />
       </section>
     </AppLayout>
   );

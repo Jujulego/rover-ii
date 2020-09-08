@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import { AppBar as MuiAppBar, Toolbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import ThemeButton from './ThemeButton';
+import ThemeButton from 'src/components/layout/ThemeButton';
 
 // Styles
 const useStyles = makeStyles(({ palette, zIndex }) => ({
