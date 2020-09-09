@@ -23,7 +23,7 @@ const Map: FC<MapProps> = (props) => {
   // Render
   return (
     <LayerContainer {...container} size={64}>
-      { layer.tiles.map((tile, i) => (
+      { layer.tiles.map(tile => (
         <Tile key={`${tile.pos.x} ${tile.pos.y}`}
           x={tile.pos.x}
           y={tile.pos.y}
