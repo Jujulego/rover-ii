@@ -5,11 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { Layer as LayerData } from 'src/maps/layer';
 
-import Layer from './map/Layer';
-import MiniMap from './map/MiniMap';
-import LayerContainer from './map/LayerContainer';
-import Tile from './map/Tile';
 import Map from './map/Map';
+import MiniMap from './map/MiniMap';
 
 // Styles
 const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({

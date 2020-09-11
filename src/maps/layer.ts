@@ -75,11 +75,25 @@ export class Layer {
     this.tiles.sort((a, b) => this.compareVector(a.pos, b.pos));
   }
 
-  get(pos: Vector): Tile | null {
+  tile(pos: Vector): Tile | null {
     return sfind(this.tiles, (tile) => this.compareVector(tile.pos, pos)) || null;
   }
 
+  copy(): Layer {
+    const tiles: Tile[] = [];
+
+    for (const tile of this.tiles) {
+      tiles.push(tile);
+    }
+
+    return new Layer(tiles);
+  }
+
   sublayer(bbox: Rect): Layer {
+    // Simple cases
+    if (Math2D.Rect.within(this.bbox, bbox)) return this;
+
+    // Compute sublayer
     const tiles: Tile[] = [];
 
     for (const tile of this.tiles) {

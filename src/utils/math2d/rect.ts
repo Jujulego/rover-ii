@@ -12,6 +12,19 @@ export interface Rect {
 // Constants
 export const NULL_RECT = { t: 0, r: 0, b: 0, l: 0 };
 
+// Utils
+export function isRect(obj: any): obj is Rect {
+  if (typeof obj === 'object') {
+    return typeof obj.t === 'number'
+      && typeof obj.r === 'number'
+      && typeof obj.b === 'number'
+      && typeof obj.l === 'number';
+  }
+
+  return false;
+}
+
+
 // Namespace
 const RectNS = {
   // Functions
@@ -39,7 +52,11 @@ const RectNS = {
   },
 
   // - tests
-  within(u: Vector, rect: Rect): boolean {
+  within(u: Vector | Rect, rect: Rect): boolean {
+    if (isRect(u)) {
+      return u.l >= rect.l && u.r <= rect.r && u.t >= rect.t && u.b <= rect.b;
+    }
+
     return u.x >= rect.l && u.x <= rect.r && u.y >= rect.t && u.y <= rect.b;
   }
 };

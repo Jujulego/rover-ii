@@ -1,6 +1,6 @@
-// Types
 import { Size } from './size';
 
+// Types
 export interface Vector {
   x: number;
   y: number;
@@ -10,6 +10,15 @@ export type VectorOrderMode = 'xy' | 'yx';
 
 // Constants
 export const NULL_VECTOR = { x: 0, y: 0 };
+
+// Utils
+export function isVector(obj: any): obj is Vector {
+  if (typeof obj === 'object') {
+    return typeof obj.x === 'number' && typeof obj.y === 'number';
+  }
+
+  return false;
+}
 
 // Namespace
 const VectorNS = {
