@@ -17,7 +17,7 @@ const useStyle = makeStyles(({ spacing }) => ({
 // Component
 const App = () => {
   // Memo
-  const layer = useMemo(() => Layer.generate(20, 20, 'rock'), []);
+  const layer = useMemo(() => Layer.generate({ h: 20, w: 20 }, 'rock'), []);
 
   // Render
   const styles = useStyle();

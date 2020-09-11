@@ -1,6 +1,6 @@
 import { BiomeName } from 'src/biomes';
 
-import Math2D, { Vector, VectorCompareMode } from 'src/utils/math2d';
+import Math2D, { Size, Vector, VectorCompareMode } from 'src/utils/math2d';
 import { sfind } from 'src/utils/sfind';
 
 // Types
@@ -49,11 +49,11 @@ export class Layer {
     return new Layer(tiles);
   }
 
-  static generate(height: number, width: number, biome: BiomeName): Layer {
+  static generate(size: Size, biome: BiomeName): Layer {
     const tiles: Tile[] = [];
 
-    for (let y = 0; y < height; ++y) {
-      for (let x = 0; x < width; ++x) {
+    for (let y = 0; y < size.h; ++y) {
+      for (let x = 0; x < size.w; ++x) {
         if (biome) {
           tiles.push({
             pos: { x, y },

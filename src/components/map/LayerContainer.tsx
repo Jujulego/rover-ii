@@ -3,7 +3,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { NULL_VECTOR, Vector } from 'src/utils/math2d';
+import { NULL_SIZE, NULL_VECTOR, Vector } from 'src/utils/math2d';
 
 import { LayerContext } from './layer.context';
 
@@ -42,7 +42,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   } = props;
 
   // State
-  const [containerSize, setContainerSize] = useState({ w: 1000, h: 200 });
+  const [containerSize, setContainerSize] = useState(NULL_SIZE);
 
   // Ref
   const observerRef = useRef<ResizeObserver>();

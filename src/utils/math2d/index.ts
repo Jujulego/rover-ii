@@ -1,7 +1,7 @@
 import VectorNS from './vector';
 
-export type { Vector, VectorCompareMode } from './vector';
-export { NULL_VECTOR } from './vector';
+export * from './size';
+export * from './vector';
 
 // Namespace
 const Math2D = {

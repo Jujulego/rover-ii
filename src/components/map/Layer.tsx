@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Layer as LayerData } from 'src/maps/layer';
 import { Vector } from 'src/utils/math2d';
 
+import { useLayer } from './layer.context';
 import Tile from './Tile';
 
 // Types
@@ -17,6 +18,9 @@ const Layer: FC<LayerProps> = (props) => {
     layer,
     onTileClick,
   } = props;
+
+  // Context
+  const { center, containerSize, tileSize } = useLayer();
 
   // Render
   return (
