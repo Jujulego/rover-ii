@@ -8,7 +8,7 @@ import LayerContainer, { LayerContainerProps } from './LayerContainer';
 const SIZE = 8;
 
 // Props
-export interface MiniMapProps extends Omit<LayerContainerProps, 'size'> {
+export interface MiniMapProps extends Omit<LayerContainerProps, 'tileSize'> {
   layer: Layer;
 }
 
@@ -24,7 +24,7 @@ const MiniMap: FC<MiniMapProps> = (props) => {
 
   // Render
   return (
-    <LayerContainer {...container} size={SIZE}>
+    <LayerContainer {...container} tileSize={SIZE}>
       <svg
         height={(bbox.b - bbox.t + 1) * SIZE}
         width={(bbox.r - bbox.l + 1) * SIZE}

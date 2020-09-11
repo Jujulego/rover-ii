@@ -3,10 +3,11 @@ import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { Layer } from 'src/maps/layer';
+import { Layer as LayerData } from 'src/maps/layer';
 
-import Map from './map/Map';
+import Layer from './map/Layer';
 import MiniMap from './map/MiniMap';
+import LayerContainer from './map/LayerContainer';
 
 // Styles
 const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
@@ -46,7 +47,7 @@ const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
 
 // Types
 export interface NavigatorProps {
-  layer: Layer;
+  layer: LayerData;
   className?: string;
 }
 
@@ -73,10 +74,9 @@ const Navigator: FC<NavigatorProps> = (props) => {
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.map}>
-        <Map
-          center={center} layer={layer}
-          onTileClick={setCenter}
-        />
+        <LayerContainer tileSize={64} center={center}>
+          <Layer layer={layer} onTileClick={setCenter} />
+        </LayerContainer>
       </div>
 
       <div

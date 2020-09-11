@@ -6,12 +6,14 @@ import { NULL_VECTOR, Vector } from 'src/utils/math2d';
 export interface LayerContextProps {
   center: Vector;
   containerSize: { w: number, h: number };
+  tileSize: number;
 }
 
 // Defaults
 const layerDefaults: LayerContextProps = {
   center: NULL_VECTOR,
-  containerSize: { w: 0, h: 0 }
+  containerSize: { w: 0, h: 0 },
+  tileSize: 0
 };
 
 // Context

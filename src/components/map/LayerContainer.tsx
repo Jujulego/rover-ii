@@ -31,13 +31,13 @@ const useStyles = makeStyles(({ palette, transitions }) => ({
 export interface LayerContainerProps {
   center?: Vector;
   zoom?: number;
-  size: number;
+  tileSize: number;
 }
 
 // Component
 const LayerContainer: FC<LayerContainerProps> = (props) => {
   const {
-    center = NULL_VECTOR, zoom = 1, size,
+    center = NULL_VECTOR, zoom = 1, tileSize,
     children
   } = props;
 
@@ -49,8 +49,8 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
 
   // Memo
   const matrix = useMemo(
-    () => `matrix(${zoom}, 0, 0, ${zoom}, ${(-center.x - .5) * size}, ${(-center.y - .5) * size})`,
-    [zoom, center.x, center.y, size]
+    () => `matrix(${zoom}, 0, 0, ${zoom}, ${(-center.x - .5) * tileSize}, ${(-center.y - .5) * tileSize})`,
+    [zoom, center.x, center.y, tileSize]
   );
 
   // Effects
@@ -80,7 +80,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   return (
     <div ref={handleContainerRef} className={styles.container}>
       <div className={styles.map} style={{ transform: matrix }}>
-        <LayerContext.Provider value={{ center, containerSize }}>
+        <LayerContext.Provider value={{ center, containerSize, tileSize }}>
           { children }
         </LayerContext.Provider>
       </div>

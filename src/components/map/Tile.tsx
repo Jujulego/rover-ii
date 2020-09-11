@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES, BiomeName } from 'src/biomes';
 import { Vector } from 'src/utils/math2d';
+import { useLayer } from './layer.context';
 
 // Styles
 const useStyles = makeStyles({
@@ -15,7 +16,6 @@ const useStyles = makeStyles({
 // Types
 export interface TileProps {
   x: number; y: number;
-  h: number; w: number;
   biome: BiomeName;
   onClick?: (position: Vector) => void;
 }
@@ -24,19 +24,22 @@ export interface TileProps {
 const Tile: FC<TileProps> = (props) => {
   // Props
   const {
-    x, y, h, w,
+    x, y,
     biome,
     onClick
   } = props;
 
+  // Context
+  const { tileSize: size } = useLayer();
+
   // Memo
   const style = useMemo(() => ({
-    height: h,
-    width:  w,
-    left:   x * w,
-    top:    y * h,
+    height: size,
+    width:  size,
+    left:   x * size,
+    top:    y * size,
     backgroundImage: `url(${BIOMES[biome].floor})`
-  }), [x, y, h, w, biome]);
+  }), [x, y, size, biome]);
 
   // Callbacks
   const handleClick = useCallback(() => {
