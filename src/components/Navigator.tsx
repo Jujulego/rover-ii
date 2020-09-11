@@ -9,6 +9,7 @@ import Layer from './map/Layer';
 import MiniMap from './map/MiniMap';
 import LayerContainer from './map/LayerContainer';
 import Tile from './map/Tile';
+import Map from './map/Map';
 
 // Styles
 const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
@@ -75,25 +76,14 @@ const Navigator: FC<NavigatorProps> = (props) => {
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.map}>
-        <LayerContainer tileSize={64} center={center}>
-          <Layer layer={layer}>
-            { tile => (
-              <Tile key={`${tile.pos.x},${tile.pos.y}`}
-                x={tile.pos.x}
-                y={tile.pos.y}
-                biome={tile.biome}
-                onClick={setCenter}
-              />
-            ) }
-          </Layer>
-        </LayerContainer>
+        <Map layer={layer} center={center} onTileClick={setCenter} />
       </div>
 
       <div
         className={clsx(styles.miniMap, { open: openMiniMap })}
         onClick={handleToggleMiniMap}
       >
-        <MiniMap center={center} layer={layer} />
+        <MiniMap layer={layer} center={center} />
       </div>
     </div>
   );
