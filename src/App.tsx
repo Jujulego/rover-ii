@@ -17,7 +17,10 @@ const useStyle = makeStyles(({ spacing }) => ({
 // Component
 const App = () => {
   // Memo
-  const layer = useMemo(() => Generators.simpleLayer({ h: 100, w: 100 }, 'rock'), []);
+  const layer = useMemo(() => Generators.cellularLayer(
+    { h: 100, w: 100 }, 5,
+    { rock: .4, sand: .3 }
+  ), []);
 
   // Render
   const styles = useStyle();
