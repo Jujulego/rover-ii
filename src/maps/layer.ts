@@ -1,6 +1,6 @@
 import { BiomeName } from 'src/biomes';
 
-import Math2D, { Rect, Size, Vector, VectorCompareMode } from 'src/utils/math2d';
+import Math2D, { Rect, Size, Vector, VectorOrderMode } from 'src/utils/math2d';
 import { sfind } from 'src/utils/sfind';
 
 // Types
@@ -10,7 +10,7 @@ export interface Tile {
 }
 
 export interface LayerOptions {
-  compareMode?: VectorCompareMode
+  compareMode?: VectorOrderMode
 }
 
 // Class
@@ -77,6 +77,18 @@ export class Layer {
 
   get(pos: Vector): Tile | null {
     return sfind(this.tiles, (tile) => this.compareVector(tile.pos, pos)) || null;
+  }
+
+  sublayer(bbox: Rect): Layer {
+    const tiles: Tile[] = [];
+
+    for (const tile of this.tiles) {
+      if (Math2D.Rect.within(tile.pos, bbox)) {
+        tiles.push(tile);
+      }
+    }
+
+    return new Layer(tiles);
   }
 
   // Properties

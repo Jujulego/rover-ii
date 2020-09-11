@@ -1,3 +1,4 @@
+import RectNS from './rect';
 import VectorNS from './vector';
 
 export * from './rect';
@@ -6,6 +7,7 @@ export * from './vector';
 
 // Namespace
 const Math2D = {
+  Rect: RectNS,
   Vector: VectorNS
 };
 

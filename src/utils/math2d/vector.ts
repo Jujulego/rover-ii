@@ -1,10 +1,12 @@
 // Types
+import { Size } from './size';
+
 export interface Vector {
   x: number;
   y: number;
 }
 
-export type VectorCompareMode = 'xy' | 'yx';
+export type VectorOrderMode = 'xy' | 'yx';
 
 // Constants
 export const NULL_VECTOR = { x: 0, y: 0 };
@@ -12,6 +14,11 @@ export const NULL_VECTOR = { x: 0, y: 0 };
 // Namespace
 const VectorNS = {
   // Functions
+  // - builders
+  fromSize(s: Size): Vector {
+    return { x: s.w, y: s.h };
+  },
+
   // - unary operations
   norm(u: Vector): number {
     return Math.sqrt(u.x * u.x + u.y * u.y);
@@ -53,12 +60,12 @@ const VectorNS = {
 
   div(u: Vector, k: number): Vector {
     return {
-      x: u.x / k,
-      y: u.y / k
+      x: Math.round(u.x / k),
+      y: Math.round(u.y / k)
     };
   },
 
-  compare(u: Vector, v: Vector, mode: VectorCompareMode = 'xy'): number {
+  compare(u: Vector, v: Vector, mode: VectorOrderMode = 'xy'): number {
     const d = this.sub(v, u);
 
     if (mode === 'xy') {
