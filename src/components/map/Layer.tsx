@@ -1,23 +1,19 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { ReactElement, useEffect, useMemo } from 'react';
 
-import { Layer as LayerData } from 'src/maps/layer';
-import Math2D, { Vector } from 'src/utils/math2d';
+import { Layer as LayerData, Tile as TileData } from 'src/maps/layer';
+import Math2D from 'src/utils/math2d';
 
 import { useLayer } from './layer.context';
-import Tile from './Tile';
 
 // Types
 export interface LayerProps {
   layer: LayerData;
-  onTileClick?: (tile: Vector) => void;
+  children: (tile: TileData) => ReactElement;
 }
 
 // Component
-const Layer: FC<LayerProps> = (props) => {
-  const {
-    layer,
-    onTileClick,
-  } = props;
+const Layer = (props: LayerProps): ReactElement => {
+  const { layer, children } = props;
 
   // Context
   const { center, containerSize, tileSize } = useLayer();
@@ -42,18 +38,7 @@ const Layer: FC<LayerProps> = (props) => {
   });
 
   // Render
-  return (
-    <>
-      { sublayer.tiles.map(tile => (
-        <Tile key={`${tile.pos.x},${tile.pos.y}`}
-          x={tile.pos.x}
-          y={tile.pos.y}
-          biome={tile.biome}
-          onClick={onTileClick}
-        />
-      )) }
-    </>
-  );
+  return <>{ sublayer.tiles.map(children) }</>;
 };
 
 export default Layer;
