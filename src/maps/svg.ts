@@ -41,15 +41,18 @@ function buildPath(layer: Layer, pos: Vector, biome: BiomeName): string {
   layer.remove(pos);
 
   // Build path
-  let path = `M ${pos.x + .5} ${pos.y + .5}`;
+  let path = '';
 
-  // Add each directions parts
   for (const dir of DIRECTIONS) {
     const part = buildPath(layer, Math2D.Vector.add(pos, dir), biome);
 
     if (part !== '') {
-      path = `${path} ${part} L ${pos.x + .5} ${pos.y + .5}`;
+      path = `${path} ${part} L ${pos.x + .5} ${pos.y + .5}`.trimStart();
     }
+  }
+
+  if (!path.startsWith('M')) {
+    path = `M ${pos.x + .5} ${pos.y + .5} ${path}`;
   }
 
   return path;
