@@ -2,9 +2,9 @@ import React, { FC, useMemo } from 'react';
 
 import { BIOMES } from 'src/biomes';
 import { Layer as LayerData } from 'src/maps/layer';
+import { renderAsSvgPaths } from 'src/maps/svg';
 
 import { useLayer } from './layer.context';
-import Layer from './Layer';
 
 // Types
 export interface SvgLayerProps {
@@ -20,6 +20,7 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
 
   // Memo
   const bbox = useMemo(() => layer.bbox, [layer]);
+  const paths = useMemo(() => renderAsSvgPaths(layer), [layer]);
 
   // Render
   return (
@@ -28,18 +29,14 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       width={(bbox.r - bbox.l + 1) * tileSize}
       viewBox={`${bbox.l} ${bbox.t} ${bbox.r + 1} ${bbox.b + 1}`}
     >
-      <Layer layer={layer}>
-        { tile => (
-          <rect
-            key={`${tile.pos.x},${tile.pos.y}`}
-            x={tile.pos.x}
-            y={tile.pos.y}
-            width={1}
-            height={1}
-            fill={`#${BIOMES[tile.biome].color}`}
-          />
-        ) }
-      </Layer>
+      { paths.map((path, i) => (
+        <path key={i}
+          d={path.path}
+          fill="transparent"
+          stroke={`#${BIOMES[path.biome].color}`}
+          strokeWidth={1}
+        />
+      )) }
     </svg>
   );
 };

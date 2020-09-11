@@ -1,7 +1,7 @@
 import { BiomeName } from 'src/biomes';
 
 import Math2D, { Rect, Size, Vector, VectorOrderMode } from 'src/utils/math2d';
-import { sfind } from 'src/utils/sfind';
+import { sfind, sindexOf } from 'src/utils/sfind';
 
 // Types
 export interface Tile {
@@ -75,8 +75,18 @@ export class Layer {
     this.tiles.sort((a, b) => this.compareVector(a.pos, b.pos));
   }
 
+  indexOfTile(pos: Vector): number {
+    return sindexOf(this.tiles, (tile) => this.compareVector(tile.pos, pos));
+  }
+
   tile(pos: Vector): Tile | null {
-    return sfind(this.tiles, (tile) => this.compareVector(tile.pos, pos)) || null;
+    const i = this.indexOfTile(pos);
+    return i > -1 ? this.tiles[i] : null;
+  }
+
+  remove(pos: Vector) {
+    const i = this.indexOfTile(pos);
+    if (i > -1) this.tiles.splice(i, 1);
   }
 
   copy(): Layer {
