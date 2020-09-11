@@ -1,6 +1,6 @@
 import { BiomeName } from 'src/biomes';
 
-import Math2D, { Size, Vector, VectorCompareMode } from 'src/utils/math2d';
+import Math2D, { Rect, Size, Vector, VectorCompareMode } from 'src/utils/math2d';
 import { sfind } from 'src/utils/sfind';
 
 // Types
@@ -80,7 +80,7 @@ export class Layer {
   }
 
   // Properties
-  get bbox() {
+  get bbox(): Rect {
     return {
       t: Math.min(...this.tiles.map(t => t.pos.y)),
       r: Math.max(...this.tiles.map(t => t.pos.x)),

@@ -1,5 +1,6 @@
 import VectorNS from './vector';
 
+export * from './rect';
 export * from './size';
 export * from './vector';
 
