@@ -10,7 +10,7 @@ export type VectorCompareMode = 'xy' | 'yx';
 export const NULL_VECTOR = { x: 0, y: 0 };
 
 // Namespace
-export const Math2D = {
+const VectorNS = {
   // Functions
   // - unary operations
   norm(u: Vector): number {
@@ -67,4 +67,6 @@ export const Math2D = {
       return d.y === 0 ? d.x : d.y;
     }
   }
-}
+};
+
+export default VectorNS;

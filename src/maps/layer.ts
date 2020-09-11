@@ -1,6 +1,6 @@
 import { BiomeName } from 'src/biomes';
 
-import { Math2D, Vector, VectorCompareMode } from 'src/utils/math2d';
+import Math2D, { Vector, VectorCompareMode } from 'src/utils/math2d';
 import { sfind } from 'src/utils/sfind';
 
 // Types
@@ -68,7 +68,7 @@ export class Layer {
 
   // Methods
   private compareVector(a: Vector, b: Vector): number {
-    return Math2D.compare(a, b, this.options.compareMode || 'xy');
+    return Math2D.Vector.compare(a, b, this.options.compareMode || 'xy');
   }
 
   private sortTiles() {

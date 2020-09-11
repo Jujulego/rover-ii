@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { NULL_VECTOR, Vector } from 'src/utils/math2d';
 
+import { LayerContext } from './layer.context';
+
 // Styles
 const useStyles = makeStyles(({ palette, transitions }) => ({
   container: {
@@ -78,7 +80,9 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   return (
     <div ref={handleContainerRef} className={styles.container}>
       <div className={styles.map} style={{ transform: matrix }}>
-        { children }
+        <LayerContext.Provider value={{ center, containerSize }}>
+          { children }
+        </LayerContext.Provider>
       </div>
     </div>
   );
