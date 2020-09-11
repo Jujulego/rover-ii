@@ -1,7 +1,7 @@
 import { BiomeName } from 'src/biomes';
 
 import Math2D, { Rect, Size, Vector, VectorOrderMode } from 'src/utils/math2d';
-import { sfind, sindexOf } from 'src/utils/sfind';
+import { sindexOf } from 'src/utils/sfind';
 
 // Types
 export interface Tile {
@@ -37,23 +37,6 @@ export class Layer {
       for (let x = 0; x < line.length; ++x) {
         const biome = line[x];
 
-        if (biome) {
-          tiles.push({
-            pos: { x, y },
-            biome
-          });
-        }
-      }
-    }
-
-    return new Layer(tiles);
-  }
-
-  static generate(size: Size, biome: BiomeName): Layer {
-    const tiles: Tile[] = [];
-
-    for (let y = 0; y < size.h; ++y) {
-      for (let x = 0; x < size.w; ++x) {
         if (biome) {
           tiles.push({
             pos: { x, y },

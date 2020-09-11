@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { Layer } from 'src/maps/layer';
+import Generators from 'src/maps/generators';
 
 import AppLayout from './components/layout/AppLayout';
 import Navigator from './components/Navigator';
@@ -17,7 +17,7 @@ const useStyle = makeStyles(({ spacing }) => ({
 // Component
 const App = () => {
   // Memo
-  const layer = useMemo(() => Layer.generate({ h: 100, w: 100 }, 'rock'), []);
+  const layer = useMemo(() => Generators.simpleLayer({ h: 100, w: 100 }, 'rock'), []);
 
   // Render
   const styles = useStyle();
