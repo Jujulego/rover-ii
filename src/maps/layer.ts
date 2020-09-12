@@ -1,6 +1,6 @@
 import { BiomeName } from 'src/biomes';
 
-import Math2D, { Rect, Size, Vector, VectorOrderMode } from 'src/utils/math2d';
+import Math2D, { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
 import { sindexOf } from 'src/utils/sfind';
 
 // Types
@@ -17,6 +17,8 @@ export interface LayerOptions {
 export class Layer {
   // Attributes
   readonly tiles: Tile[];
+
+  private _bbox = NULL_RECT;
   private options: LayerOptions;
 
   // Constructor
@@ -24,7 +26,7 @@ export class Layer {
     this.tiles = tiles;
     this.options = options;
 
-    this.sortTiles();
+    this.setupLayer();
   }
 
   // Static methods
@@ -54,8 +56,17 @@ export class Layer {
     return Math2D.Vector.compare(a, b, this.options.compareMode || 'xy');
   }
 
-  private sortTiles() {
+  private setupLayer() {
+    // Sort tiles
     this.tiles.sort((a, b) => this.compareVector(a.pos, b.pos));
+
+    // Compute bbox
+    this._bbox = {
+      t: Math.min(...this.tiles.map(t => t.pos.y)),
+      r: Math.max(...this.tiles.map(t => t.pos.x)),
+      b: Math.max(...this.tiles.map(t => t.pos.y)),
+      l: Math.min(...this.tiles.map(t => t.pos.x))
+    };
   }
 
   indexOfTile(pos: Vector): number {
@@ -100,11 +111,6 @@ export class Layer {
 
   // Properties
   get bbox(): Rect {
-    return {
-      t: Math.min(...this.tiles.map(t => t.pos.y)),
-      r: Math.max(...this.tiles.map(t => t.pos.x)),
-      b: Math.max(...this.tiles.map(t => t.pos.y)),
-      l: Math.min(...this.tiles.map(t => t.pos.x))
-    }
+    return this._bbox;
   }
 }

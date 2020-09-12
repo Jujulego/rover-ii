@@ -21,10 +21,10 @@ const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
     top: spacing(2),
     right: spacing(2),
     zIndex: 10,
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
 
-    borderRadius: 50,
+    borderRadius: 75,
     boxShadow: shadows[2],
     cursor: 'pointer',
     overflow: 'hidden',

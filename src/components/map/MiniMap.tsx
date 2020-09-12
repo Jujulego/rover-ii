@@ -6,7 +6,7 @@ import LayerContainer, { LayerContainerProps } from './LayerContainer';
 import SvgLayer from './SvgLayer';
 
 // Constants
-const SIZE = 8;
+const SIZE = 6;
 
 // Props
 export interface MiniMapProps extends Omit<LayerContainerProps, 'tileSize'> {

@@ -14,6 +14,11 @@ const DIRECTIONS = [
 // Type
 export type BiomesFrequencies = Record<BiomeName, number>;
 
+export interface CellularOptions {
+  iterations?: number;
+  emptyBiome?: BiomeName | null;
+}
+
 // Utils
 function buildFrequencies(): BiomesFrequencies {
   const freqs = {} as BiomesFrequencies;
@@ -26,7 +31,12 @@ function buildFrequencies(): BiomesFrequencies {
 }
 
 // Generator
-export function cellularLayer(size: Size, iterations: number, biomes: Partial<BiomesFrequencies>): Layer {
+export function cellularLayer(size: Size, biomes: Partial<BiomesFrequencies>, options: CellularOptions = {}): Layer {
+  const {
+    iterations = 5,
+    emptyBiome = null
+  } = options;
+
   // Compute sum and cumulated frequencies
   const cumulated = buildFrequencies();
   let sum = 0;
@@ -102,6 +112,15 @@ export function cellularLayer(size: Size, iterations: number, biomes: Partial<Bi
             break;
           }
         }
+      }
+    }
+  }
+
+  // Remplace empty biome
+  if (emptyBiome) {
+    for (let y = 0; y < size.h; ++y) {
+      for (let x = 0; x < size.w; ++x) {
+        matrix[y][x] = matrix[y][x] || emptyBiome;
       }
     }
   }

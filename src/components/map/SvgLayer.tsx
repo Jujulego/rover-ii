@@ -19,10 +19,11 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   const { tileSize } = useLayer();
 
   // Memo
-  const bbox = useMemo(() => layer.bbox, [layer]);
   const paths = useMemo(() => renderAsSvgPaths(layer), [layer]);
 
   // Render
+  const bbox = layer.bbox;
+
   return (
     <svg
       height={(bbox.b - bbox.t + 1) * tileSize}
@@ -33,8 +34,9 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
         <path key={i}
           d={path.path}
           fill="transparent"
-          stroke={`#${BIOMES[path.biome].color}`}
-          strokeWidth={.5}
+          stroke={BIOMES[path.biome].color}
+          strokeLinecap="square"
+          strokeWidth={1}
         />
       )) }
     </svg>
