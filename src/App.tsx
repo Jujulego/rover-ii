@@ -19,8 +19,8 @@ const App = () => {
   // Memo
   const layer = useMemo(() => Generators.cellularLayer(
     { h: 100, w: 100 },
-    { rock: .3, sand: .2 },
-    { emptyBiome: 'water' }
+    { rock: .4, sand: .2 },
+    { iterations: 5, emptyBiome: 'water' }
   ), []);
 
   // Render

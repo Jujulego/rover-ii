@@ -13,12 +13,15 @@
     "@types/node": "^12.12.57",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
+    "@types/seedrandom": "^2.4.28",
     "clsx": "^1.1.1",
+    "moment": "^2.27.0",
     "react": "^16.13.1",
     "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
     "resize-observer-polyfill": "^1.5.1",
+    "seedrandom": "^3.0.5",
     "typescript": "^3.9.7"
   },
   "scripts": {
