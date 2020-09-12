@@ -77,9 +77,7 @@ export function cellularLayer(size: Size, iterations: number, biomes: Partial<Bi
 
         for (const dir of DIRECTIONS) {
           const p = Math2D.Vector.add({ x, y }, dir);
-          if (!Math2D.Rect.within(p, bbox)) continue;
-
-          const b = matrix[p.y][p.x];
+          const b = Math2D.Rect.within(p, bbox) ? matrix[p.y][p.x] : null;
 
           if (b) {
             biomes[b]++;
