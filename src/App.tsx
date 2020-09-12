@@ -19,7 +19,7 @@ const App = () => {
   // Memo
   const layer = useMemo(() => Generators.cellularLayer(
     { h: 100, w: 100 },
-    { rock: .4, sand: .3 },
+    { rock: .3, sand: .2 },
     { emptyBiome: 'water' }
   ), []);
 

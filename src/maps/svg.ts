@@ -51,6 +51,10 @@ function buildPath(layer: Layer, pos: Vector, biome: BiomeName): string {
     }
   }
 
+  if (path === '') {
+    path = 'Z';
+  }
+
   if (!path.startsWith('M')) {
     path = `M ${pos.x + .5} ${pos.y + .5} ${path}`;
   }
