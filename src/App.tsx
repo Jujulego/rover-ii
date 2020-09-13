@@ -6,7 +6,6 @@ import Generators from 'src/maps/generators';
 
 import AppLayout from './components/layout/AppLayout';
 import Navigator from './components/Navigator';
-import MiniMap from './components/map/MiniMap';
 
 // Styles
 const useStyle = makeStyles(({ spacing }) => ({
@@ -30,10 +29,7 @@ const App = () => {
 
   return (
     <AppLayout>
-      <div className={styles.navigator}>
-        <MiniMap layer={layer} center={{ x: 125, y: 50 }} />
-      </div>
-      {/*<Navigator className={styles.navigator} layer={layer} />*/}
+      <Navigator className={styles.navigator} layer={layer} />
     </AppLayout>
   );
 };

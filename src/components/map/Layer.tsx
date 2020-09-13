@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { Layer as LayerData, Tile as TileData } from 'src/maps/layer';
 import Math2D from 'src/utils/math2d';
@@ -31,11 +31,6 @@ const Layer = (props: LayerProps): ReactElement => {
   }, [center, containerSize, tileSize]);
 
   const sublayer = useMemo(() => layer.sublayer(bbox), [layer, bbox]);
-
-  // Effects
-  useEffect(() => {
-    console.log(`Rendering ${sublayer.tiles.length}/${layer.tiles.length} tiles`);
-  });
 
   // Render
   return <>{ sublayer.tiles.map(children) }</>;

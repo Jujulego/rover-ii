@@ -21,17 +21,14 @@ export interface LayerSvgPath {
 export function renderAsSvgPaths(layer: Layer): LayerSvgPath[] {
   const paths: LayerSvgPath[] = [];
   layer = layer.copy();
-  let l = 0;
 
   while (layer.tiles.length > 0) {
     const tile = layer.tiles[0];
     const path = buildPath(layer, tile.pos);
 
-    l += path.length;
     paths.push({ path, biome: tile.biome });
   }
 
-  console.log(l);
   return paths;
 }
 
