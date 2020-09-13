@@ -8,7 +8,7 @@ const DIRECTIONS = [
   { x: 0,  y: 1  },
   { x: 1,  y: 0  },
   { x: 0,  y: -1 },
-  { x: -1, y: 0  }
+  { x: -1, y: 0  },
 ];
 
 // Types
@@ -21,42 +21,59 @@ export interface LayerSvgPath {
 export function renderAsSvgPaths(layer: Layer): LayerSvgPath[] {
   const paths: LayerSvgPath[] = [];
   layer = layer.copy();
+  let l = 0;
 
   while (layer.tiles.length > 0) {
     const tile = layer.tiles[0];
-    const path = buildPath(layer, tile.pos, tile.biome);
+    const path = buildPath(layer, tile.pos);
 
+    l += path.length;
     paths.push({ path, biome: tile.biome });
   }
 
+  console.log(l);
   return paths;
 }
 
-function buildPath(layer: Layer, pos: Vector, biome: BiomeName): string {
-  // Get tile and check it's biome
-  const tile = layer.tile(pos);
-  if (!tile || tile.biome !== biome) return '';
+function buildPath(layer: Layer, start: Vector): string {
+  // Initiate
+  let path = `M ${start.x + .5} ${start.y + .5} Z`;
+  const stack = [{ pos: start, previous: start }];
 
-  // Remove tile from layer
-  layer.remove(pos);
+  // First tile
+  const biome = layer.tile(start)?.biome;
+  if (!biome) return '';
 
-  // Build path
-  let path = '';
+  // Algorithm
+  let last: Vector = start;
 
-  for (const dir of DIRECTIONS) {
-    const part = buildPath(layer, Math2D.Vector.add(pos, dir), biome);
+  while (stack.length > 0) {
+    const { pos, previous } = stack.pop()!;
 
-    if (part !== '') {
-      path = `${path} ${part} L ${pos.x + .5} ${pos.y + .5}`.trimStart();
+    // Remove tile from layer
+    if (!layer.tile(pos)) continue;
+    layer.remove(pos);
+
+    // Build path
+    if (!Math2D.Vector.equals(previous, last)) {
+      path = `${path} M ${previous.x + .5} ${previous.y + .5}`;
     }
-  }
 
-  if (path === '') {
-    path = 'Z';
-  }
+    path = `${path} L ${pos.x + .5} ${pos.y + .5}`;
+    last = pos;
 
-  if (!path.startsWith('M')) {
-    path = `M ${pos.x + .5} ${pos.y + .5} ${path}`;
+    // Visit neighbors
+    for (const dir of DIRECTIONS) {
+      const p = Math2D.Vector.add(pos, dir);
+      const tile = layer.tile(p);
+
+      // Checks
+      if (!tile) continue;
+      if (tile.biome !== biome) continue;
+
+      // Add to stack
+      stack.push({ pos: p, previous: pos });
+    }
   }
 
   return path;

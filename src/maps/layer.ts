@@ -61,12 +61,21 @@ export class Layer {
     this.tiles.sort((a, b) => this.compareVector(a.pos, b.pos));
 
     // Compute bbox
-    this._bbox = {
-      t: Math.min(...this.tiles.map(t => t.pos.y)),
-      r: Math.max(...this.tiles.map(t => t.pos.x)),
-      b: Math.max(...this.tiles.map(t => t.pos.y)),
-      l: Math.min(...this.tiles.map(t => t.pos.x))
+    const bbox = {
+      t: Infinity,
+      r: -Infinity,
+      b: -Infinity,
+      l: Infinity
     };
+
+    for (const tile of this.tiles) {
+      bbox.t = Math.min(bbox.t, tile.pos.y);
+      bbox.r = Math.max(bbox.r, tile.pos.x);
+      bbox.b = Math.max(bbox.b, tile.pos.y);
+      bbox.l = Math.min(bbox.l, tile.pos.x);
+    }
+
+    this._bbox = bbox;
   }
 
   indexOfTile(pos: Vector): number {
