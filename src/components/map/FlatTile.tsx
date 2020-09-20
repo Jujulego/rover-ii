@@ -14,14 +14,14 @@ const useStyles = makeStyles({
 });
 
 // Types
-export interface TileProps {
+export interface FlatTileProps {
   x: number; y: number;
   biome: BiomeName;
   onClick?: (position: Vector) => void;
 }
 
 // Component
-const Tile: FC<TileProps> = (props) => {
+const FlatTile: FC<FlatTileProps> = (props) => {
   // Props
   const {
     x, y,
@@ -59,4 +59,4 @@ const Tile: FC<TileProps> = (props) => {
   );
 };
 
-export default Tile;
+export default FlatTile;
