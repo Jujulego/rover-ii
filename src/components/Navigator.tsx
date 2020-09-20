@@ -73,7 +73,7 @@ const Navigator: FC<NavigatorProps> = (props) => {
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.map}>
-        <Map layer={layer} center={center} onTileClick={setCenter} />
+        <Map layer={layer} center={center} onTileClick={setCenter} mode="isometric" />
       </div>
 
       <div

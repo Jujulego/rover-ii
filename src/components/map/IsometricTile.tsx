@@ -47,7 +47,7 @@ const IsometricTile: FC<IsometricTileProps> = (props) => {
   const style = useMemo(() => ({
     height: height,
     width:  width,
-    left:   (x - y) * (width * .5),
+    left:   (x - y) * width * .5,
     top:    (x + y) * (height * .5 + 1) - thickness,
     zIndex: x + y
   }), [x, y, width, height, thickness]);

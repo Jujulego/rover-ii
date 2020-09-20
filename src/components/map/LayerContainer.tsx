@@ -27,17 +27,22 @@ const useStyles = makeStyles(({ palette, transitions }) => ({
   }
 }));
 
+// Types
+export type LayerMode = 'flat' | 'isometric';
+
 // Props
 export interface LayerContainerProps {
   center?: Vector;
   zoom?: number;
   tileSize: number;
+  mode?: LayerMode;
 }
 
 // Component
 const LayerContainer: FC<LayerContainerProps> = (props) => {
   const {
     center = NULL_VECTOR, zoom = 1, tileSize,
+    mode = 'flat',
     children
   } = props;
 
@@ -48,10 +53,19 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   const observerRef = useRef<ResizeObserver>();
 
   // Memo
-  const matrix = useMemo(
-    () => `matrix(${zoom}, 0, 0, ${zoom}, ${(-center.x - .5) * tileSize}, ${(-center.y - .5) * tileSize})`,
-    [zoom, center.x, center.y, tileSize]
-  );
+  const matrix = useMemo(() => {
+    const x = center.x;
+    const y = center.y;
+
+    if (mode === 'isometric') {
+      const width = tileSize * Math.tan(Math.PI / 3);
+      const height = width * 64 / 132;
+
+      return `matrix(${zoom}, 0, 0, ${zoom}, ${-(x - y + 1) * width * .5}, ${-(x + y + 1) * (height * .5 + 1)})`;
+    }
+
+    return `matrix(${zoom}, 0, 0, ${zoom}, ${(-x - .5) * tileSize}, ${(-y - .5) * tileSize})`;
+  }, [zoom, center.x, center.y, tileSize, mode]);
 
   // Effects
   useEffect(() => {
