@@ -1,4 +1,4 @@
-import ice from './ice';
+import grass from './grass';
 import rock from './rock';
 import sand from './sand';
 import water from './water';
@@ -9,11 +9,11 @@ export type OptionnalBiomeName = BiomeName | '';
 
 // Constants
 export const BIOMES = {
-  ice,
+  grass,
   rock,
   sand,
   water,
 };
 
-export const BIOME_NAMES: BiomeName[] = ['ice', 'rock', 'sand', 'water'];
+export const BIOME_NAMES: BiomeName[] = ['grass', 'rock', 'sand', 'water'];
 export const OPT_BIOME_NAMES: OptionnalBiomeName[] = [...BIOME_NAMES, ''];
