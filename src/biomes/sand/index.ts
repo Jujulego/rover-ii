@@ -1,6 +1,7 @@
 import { Biome } from '../biome';
 
-import floor from './floor.png';
+import isometric from './isometric.png';
+import flat from './flat.png';
 
 // Theme
-export default new Biome('#ECDCB8', floor);
+export default new Biome('#ECDCB8', flat, isometric);

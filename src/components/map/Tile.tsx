@@ -38,7 +38,7 @@ const Tile: FC<TileProps> = (props) => {
     width:  size,
     left:   x * size,
     top:    y * size,
-    backgroundImage: `url(${BIOMES[biome].floor})`
+    backgroundImage: `url(${BIOMES[biome].flat})`
   }), [x, y, size, biome]);
 
   // Callbacks
