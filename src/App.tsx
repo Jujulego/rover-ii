@@ -5,7 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Generators from 'src/maps/generators';
 
 import AppLayout from './components/layout/AppLayout';
-import Navigator from './components/Navigator';
+import Map from './components/map/Map';
+import LayerContainer from './components/map/LayerContainer';
+import Layer from './components/map/Layer';
+import SvgLayer from './components/map/SvgLayer';
 
 // Styles
 const useStyle = makeStyles(({ spacing }) => ({
@@ -19,9 +22,9 @@ const App = () => {
   // Memo
   // const layer = useMemo(() => Generators.simpleLayer({ h: 100, w: 250 }, 'rock'), []);
   const layer = useMemo(() => Generators.cellularLayer(
-    { h: 10, w: 10 },
+    { h: 20, w: 20 },
     { grass: .4, sand: .2 },
-    { seed: 'test', iterations: 5, emptyBiome: 'water' }
+    { iterations: 5, emptyBiome: 'water' }
   ), []);
 
   // Render
@@ -29,7 +32,11 @@ const App = () => {
 
   return (
     <AppLayout>
-      <Navigator className={styles.navigator} layer={layer} />
+      <div className={styles.navigator}>
+        <LayerContainer tileSize={24} center={{ x: 10, y: 10 }}>
+          <SvgLayer layer={layer} />
+        </LayerContainer>
+      </div>
     </AppLayout>
   );
 };
