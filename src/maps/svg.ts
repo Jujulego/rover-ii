@@ -116,9 +116,15 @@ function buildPath(layer: Layer, start: Vector): string {
     }
 
     // Single step cases
-    if (!found) break;
+    if (!found) {
+      return path + ' Z';
+    }
 
   } while (!Math2D.Vector.equals(pos, start));
+
+  // Push to the "end" of the last tile
+  const back = Math2D.Vector.sub(previous, pos);
+  path += ` l ${back.x * -.5} ${back.y * -.5}`;
 
   return path + ' Z';
 }
