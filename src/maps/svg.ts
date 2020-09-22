@@ -117,6 +117,7 @@ function buildPath(layer: Layer, start: Vector): string {
 
     // Single step cases
     if (!found) break;
+
   } while (!Math2D.Vector.equals(pos, start));
 
   return path + ' Z';
