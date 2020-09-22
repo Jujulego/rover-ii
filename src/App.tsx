@@ -24,7 +24,7 @@ const App = () => {
   const layer = useMemo(() => Generators.cellularLayer(
     { h: 20, w: 20 },
     { grass: .4, sand: .2 },
-    { iterations: 5, emptyBiome: 'water' }
+    { seed: 'toto', iterations: 5, emptyBiome: 'water' }
   ), []);
 
   // Render
