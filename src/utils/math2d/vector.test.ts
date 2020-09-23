@@ -1,6 +1,59 @@
-import { Vector } from './vector';
+import { parseVectorArgs, Vector } from './vector';
 
 // Test
+// - utils
+describe('parseVectorArgs', () => {
+  test('with an object no options', () => {
+    expect(parseVectorArgs([{ x: 1, y: 1 }]))
+      .toEqual([{ x: 1, y: 1 }]);
+  });
+
+  test('with an object and options', () => {
+    expect(parseVectorArgs([{ x: 1, y: 1 }, 'test', 85]))
+      .toEqual([{ x: 1, y: 1 }, 'test', 85]);
+  });
+
+  test('with numbers no options', () => {
+    expect(parseVectorArgs<[], []>([1, 1]))
+      .toEqual([{ x: 1, y: 1 }]);
+  });
+
+  test('with numbers and options', () => {
+    expect(parseVectorArgs<[string, number], []>([1, 1, 'test', 85]))
+      .toEqual([{ x: 1, y: 1 }, 'test', 85]);
+  });
+});
+
+// - tests
+describe('Vector.within', () => {
+  const u = new Vector(1, 1);
+
+  it('should be within', () => {
+    expect(u.within(0, 0, 2, 2))
+      .toBeTruthy();
+  });
+
+  it('should be out (on r)', () => {
+    expect(u.within(0, 0, 2, .5))
+      .toBeFalsy();
+  });
+
+  it('should be out (on b)', () => {
+    expect(u.within(0, 0, .5, 2))
+      .toBeFalsy();
+  });
+
+  it('should be out (on l)', () => {
+    expect(u.within(0, 1.5, 2, 2))
+      .toBeFalsy();
+  });
+
+  it('should be out (on t)', () => {
+    expect(u.within(1.5, 0, 2, 2))
+      .toBeFalsy();
+  });
+});
+
 // - unary operations
 test('Vector.norm', () => {
   expect(new Vector(0, 0).norm())
@@ -29,6 +82,26 @@ describe('Vector.unit', () => {
 });
 
 // - binary operations
+describe('Vector.equals', () => {
+  const u = new Vector(1, 1);
+
+  it('should return true', () => {
+    expect(u.equals(1, 1))
+      .toBeTruthy();
+  });
+
+  it('should return false', () => {
+    expect(u.equals(1, 2))
+      .toBeFalsy();
+
+    expect(u.equals(2, 1))
+      .toBeFalsy();
+
+    expect(u.equals(2, 2))
+      .toBeFalsy();
+  });
+});
+
 test('Vector.add', () => {
   const u = new Vector(1, 0);
 

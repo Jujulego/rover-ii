@@ -1,7 +1,7 @@
 import { ArgsArray } from '../types';
 
 import { Size } from './size';
-import { NULL_VECTOR, IVector, VectorArgs, parseVectorArgs } from './vector';
+import { VectorArgs, parseVectorArgs, IVector } from './vector';
 
 // Types
 export interface IRect {
@@ -59,6 +59,10 @@ export class Rect implements IRect {
   }
 
   // Static methods
+  static fromVectors(u: IVector, v: IVector): Rect;
+  static fromVectors(xu: number, yu: number, v: IVector): Rect;
+  static fromVectors(u: IVector, xv: number, yv: number): Rect;
+  static fromVectors(xu: number, yu: number, xv: number, yv: number): Rect;
   static fromVectors(...args: VectorArgs<VectorArgs>): Rect {
     const [u, ...other] = parseVectorArgs(args);
     const [v] = parseVectorArgs(other);
@@ -71,6 +75,8 @@ export class Rect implements IRect {
     );
   }
 
+  static fromVectorSize(u: IVector, s: Size): Rect;
+  static fromVectorSize(x: number, y: number, s: Size): Rect;
   static fromVectorSize(...args: VectorArgs<[Size]>): Rect {
     const [u, s] = parseVectorArgs(args);
     return new Rect(u.y, u.x, u.y + s.h, u.x + s.w);
