@@ -3,7 +3,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES, BiomeName } from 'src/biomes';
-import { Vector } from 'src/utils/math2d';
+import { IVector } from 'src/utils/math2d';
 import { useLayer } from './layer.context';
 
 // Styles
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 export interface IsometricTileProps {
   x: number; y: number;
   biome: BiomeName;
-  onClick?: (position: Vector) => void;
+  onClick?: (position: IVector) => void;
 }
 
 // Component

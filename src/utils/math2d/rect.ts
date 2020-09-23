@@ -1,5 +1,5 @@
 import { Size } from './size';
-import { NULL_VECTOR, Vector } from './vector';
+import { NULL_VECTOR, IVector } from './vector';
 
 // Types
 export interface Rect {
@@ -29,11 +29,11 @@ export function isRect(obj: any): obj is Rect {
 const RectNS = {
   // Functions
   // - builders
-  fromVector(u: Vector): Rect {
+  fromVector(u: IVector): Rect {
     return this.fromVectors(NULL_VECTOR, u);
   },
 
-  fromVectors(u: Vector, v: Vector): Rect {
+  fromVectors(u: IVector, v: IVector): Rect {
     return {
       t: Math.min(u.y, v.y),
       r: Math.max(u.x, v.x),
@@ -42,7 +42,7 @@ const RectNS = {
     };
   },
 
-  fromVectorSize(u: Vector, s: Size): Rect {
+  fromVectorSize(u: IVector, s: Size): Rect {
     return {
       t: u.y,
       r: u.x + s.w,
@@ -52,7 +52,7 @@ const RectNS = {
   },
 
   // - tests
-  within(u: Vector | Rect, rect: Rect): boolean {
+  within(u: IVector | Rect, rect: Rect): boolean {
     if (isRect(u)) {
       return u.l >= rect.l && u.r <= rect.r && u.t >= rect.t && u.b <= rect.b;
     }

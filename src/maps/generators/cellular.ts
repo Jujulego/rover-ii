@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 
 import { OPT_BIOME_NAMES, OptionnalBiomeName } from 'src/biomes';
-import Math2D, { Rect, Size, Vector } from 'src/utils/math2d';
+import Math2D, { Rect, Size, IVector } from 'src/utils/math2d';
 
 import { Layer } from '../layer';
 
@@ -90,7 +90,7 @@ function randomMatrix(size: Size, biomes: Partial<BiomesFrequencies>, seed: stri
   return matrix;
 }
 
-function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: Vector, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
+function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: IVector, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
   // Initiate
   const biomes = biomesFrequencies();
 

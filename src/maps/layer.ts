@@ -1,11 +1,11 @@
 import { BiomeName, OptionnalBiomeName } from 'src/biomes';
 
-import Math2D, { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
+import Math2D, { NULL_RECT, Rect, IVector, VectorOrderMode } from 'src/utils/math2d';
 import { sindexOf } from 'src/utils/sfind';
 
 // Types
 export interface Tile {
-  pos: Vector;
+  pos: IVector;
   biome: BiomeName;
 }
 
@@ -52,7 +52,7 @@ export class Layer {
   }
 
   // Methods
-  private compareVector(a: Vector, b: Vector): number {
+  private compareVector(a: IVector, b: IVector): number {
     return Math2D.Vector.compare(a, b, this.options.compareMode || 'xy');
   }
 
@@ -78,16 +78,16 @@ export class Layer {
     this._bbox = bbox;
   }
 
-  indexOfTile(pos: Vector): number {
+  indexOfTile(pos: IVector): number {
     return sindexOf(this.tiles, (tile) => this.compareVector(tile.pos, pos));
   }
 
-  tile(pos: Vector): Tile | null {
+  tile(pos: IVector): Tile | null {
     const i = this.indexOfTile(pos);
     return i > -1 ? this.tiles[i] : null;
   }
 
-  remove(pos: Vector) {
+  remove(pos: IVector) {
     const i = this.indexOfTile(pos);
     if (i > -1) this.tiles.splice(i, 1);
   }

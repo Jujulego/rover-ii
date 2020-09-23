@@ -1,5 +1,5 @@
 import { BiomeName } from 'src/biomes';
-import Math2D, { Vector } from 'src/utils/math2d';
+import Math2D, { IVector } from 'src/utils/math2d';
 
 import { Layer, Tile } from './layer';
 
@@ -66,7 +66,7 @@ function filterTiles(layer: Layer): Layer {
   return new Layer(tiles);
 }
 
-function buildPath(layer: Layer, start: Vector): string {
+function buildPath(layer: Layer, start: IVector): string {
   // Prepare layer
   const biomes = layer.copy();
 
