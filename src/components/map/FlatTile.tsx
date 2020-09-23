@@ -3,7 +3,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES, BiomeName } from 'src/biomes';
-import { IVector } from 'src/utils/math2d';
+import { Vector } from 'src/utils/math2d';
 import { useLayer } from './layer.context';
 
 // Styles
@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 export interface FlatTileProps {
   x: number; y: number;
   biome: BiomeName;
-  onClick?: (position: IVector) => void;
+  onClick?: (position: Vector) => void;
 }
 
 // Component
@@ -44,7 +44,7 @@ const FlatTile: FC<FlatTileProps> = (props) => {
   // Callbacks
   const handleClick = useCallback(() => {
     if (onClick) {
-      onClick({ x, y });
+      onClick(new Vector(x, y));
     }
   }, [onClick, x, y]);
 

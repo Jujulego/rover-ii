@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 
 import { Layer as LayerData } from 'src/maps/layer';
-import { IVector } from 'src/utils/math2d';
+import { Vector } from 'src/utils/math2d';
 
 import Layer from './Layer';
 import LayerContainer, { LayerMode } from './LayerContainer';
@@ -11,11 +11,11 @@ import IsometricTile from './IsometricTile';
 // Types
 export interface MapProps {
   layer: LayerData;
-  center?: IVector;
+  center?: Vector;
   zoom?: number;
   mode?: LayerMode
 
-  onTileClick?: (position: IVector) => void;
+  onTileClick?: (position: Vector) => void;
 }
 
 // Component

@@ -3,7 +3,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { NULL_SIZE, NULL_VECTOR, IVector } from 'src/utils/math2d';
+import { NULL_SIZE, NULL_VECTOR, Vector } from 'src/utils/math2d';
 
 import { LayerContext } from './layer.context';
 
@@ -32,7 +32,7 @@ export type LayerMode = 'flat' | 'isometric';
 
 // Props
 export interface LayerContainerProps {
-  center?: IVector;
+  center?: Vector;
   zoom?: number;
   tileSize: number;
   mode?: LayerMode;

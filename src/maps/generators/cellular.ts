@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 
 import { OPT_BIOME_NAMES, OptionnalBiomeName } from 'src/biomes';
-import Math2D, { Rect, Size, IVector } from 'src/utils/math2d';
+import Math2D, { Rect, Size, Vector } from 'src/utils/math2d';
 
 import { Layer } from '../layer';
 
@@ -90,12 +90,12 @@ function randomMatrix(size: Size, biomes: Partial<BiomesFrequencies>, seed: stri
   return matrix;
 }
 
-function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: IVector, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
+function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: Vector, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
   // Initiate
   const biomes = biomesFrequencies();
 
   for (const dir of DIRECTIONS) {
-    const p = Math2D.Vector.add(pos, dir);
+    const p = pos.add(dir);
 
     if (Math2D.Rect.within(p, bbox)) {
       const b = matrix[p.y][p.x];
@@ -123,7 +123,7 @@ export function cellularLayer(size: Size, biomes: Partial<BiomesFrequencies>, op
     for (let y = 0; y < size.h; ++y) {
       for (let x = 0; x < size.w; ++x) {
         // Count surrounding biomes
-        const biomes = evaluateSurroundings(matrix, bbox, { x, y }, emptyBiome);
+        const biomes = evaluateSurroundings(matrix, bbox, new Vector(x, y), emptyBiome);
 
         // Changes
         for (const name of OPT_BIOME_NAMES) {
