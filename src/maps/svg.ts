@@ -1,14 +1,25 @@
 import { BiomeName } from 'src/biomes';
 import Math2D, { Vector } from 'src/utils/math2d';
 
-import { Layer } from './layer';
+import { Layer, Tile } from './layer';
 
 // Constants
-const DIRECTIONS = [
-  { x: 0,  y: 1  },
-  { x: 1,  y: 0  },
-  { x: 0,  y: -1 },
-  { x: -1, y: 0  },
+const FILTER_DIRECTIONS = [
+  { x:  1, y:  0 },
+  { x:  1, y:  1 },
+  { x:  0, y:  1 },
+  { x: -1, y:  1 },
+  { x: -1, y:  0 },
+  { x: -1, y: -1 },
+  { x:  0, y: -1 },
+  { x:  1, y: -1 },
+];
+
+const BUILD_DIRECTIONS = [
+  { x:  0, y: -1 },
+  { x: -1, y:  0 },
+  { x:  0, y:  1 },
+  { x:  1, y:  0 },
 ];
 
 // Types
@@ -20,7 +31,7 @@ export interface LayerSvgPath {
 // Algorithm
 export function renderAsSvgPaths(layer: Layer): LayerSvgPath[] {
   const paths: LayerSvgPath[] = [];
-  layer = layer.copy();
+  layer = filterTiles(layer);
 
   while (layer.tiles.length > 0) {
     const tile = layer.tiles[0];
@@ -32,46 +43,88 @@ export function renderAsSvgPaths(layer: Layer): LayerSvgPath[] {
   return paths;
 }
 
-function buildPath(layer: Layer, start: Vector): string {
-  // Initiate
-  let path = `M ${start.x + .5} ${start.y + .5} Z`;
-  const stack = [{ pos: start, previous: start }];
+function filterTiles(layer: Layer): Layer {
+  const tiles: Tile[] = [];
 
-  // First tile
-  const biome = layer.tile(start)?.biome;
-  if (!biome) return '';
+  for (const tile of layer.tiles) {
+    let same = 0;
 
-  // Algorithm
-  let last: Vector = start;
+    for (const dir of FILTER_DIRECTIONS) {
+      const p = Math2D.Vector.add(tile.pos, dir);
+      const t = layer.tile(p);
 
-  while (stack.length > 0) {
-    const { pos, previous } = stack.pop()!;
-
-    // Remove tile from layer
-    if (!layer.tile(pos)) continue;
-    layer.remove(pos);
-
-    // Build path
-    if (!Math2D.Vector.equals(previous, last)) {
-      path = `${path} M ${previous.x + .5} ${previous.y + .5}`;
+      if (t?.biome === tile.biome) {
+        ++same;
+      }
     }
 
-    path = `${path} L ${pos.x + .5} ${pos.y + .5}`;
-    last = pos;
-
-    // Visit neighbors
-    for (const dir of DIRECTIONS) {
-      const p = Math2D.Vector.add(pos, dir);
-      const tile = layer.tile(p);
-
-      // Checks
-      if (!tile) continue;
-      if (tile.biome !== biome) continue;
-
-      // Add to stack
-      stack.push({ pos: p, previous: pos });
+    if (same < 8) {
+      tiles.push(tile);
     }
   }
 
-  return path;
+  return new Layer(tiles);
+}
+
+function buildPath(layer: Layer, start: Vector): string {
+  // Prepare layer
+  const biomes = layer.copy();
+
+  // First tile
+  const biome = biomes.tile(start)?.biome;
+  if (!biome) return '';
+
+  let path = `M ${start.x + .5} ${start.y + .5}`;
+  layer.remove(start);
+
+  // Initiate
+  let previous = Math2D.Vector.sub(start, { x: 0, y: -1 });
+  let pos = start;
+
+  do {
+    // Compute "back" direction (go from pos to previous) => it will be the last evaluated
+    const back = Math2D.Vector.sub(previous, pos);
+    const si = BUILD_DIRECTIONS.findIndex(d => Math2D.Vector.equals(d, back));
+
+    // Search for a valid next tile
+    let found = false;
+
+    for (let i = 0; i < BUILD_DIRECTIONS.length; ++i) {
+      const dir = BUILD_DIRECTIONS[(si + 1 + i) % BUILD_DIRECTIONS.length];
+      const next = Math2D.Vector.add(pos, dir);
+      const tile = biomes.tile(next);
+
+      // Check if valid next value
+      if (!tile) continue;
+      if (tile.biome !== biome) continue;
+
+      // Add to path
+      found = true;
+      layer.remove(next);
+
+      if (Math2D.Vector.equals(dir, back)) {
+        path += ` l ${back.x * -.5} ${back.y * -.5}`;
+      }
+
+      path += ` L ${next.x + .5} ${next.y + .5}`;
+
+      // Evolve
+      previous = pos;
+      pos = next;
+
+      break;
+    }
+
+    // Single step cases
+    if (!found) {
+      return path + ' Z';
+    }
+
+  } while (!Math2D.Vector.equals(pos, start));
+
+  // Push to the "end" of the last tile
+  const back = Math2D.Vector.sub(previous, pos);
+  path += ` l ${back.x * -.5} ${back.y * -.5}`;
+
+  return path + ' Z';
 }
