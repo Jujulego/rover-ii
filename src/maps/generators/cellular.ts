@@ -1,7 +1,7 @@
 import seedrandom from 'seedrandom';
 
 import { OPT_BIOME_NAMES, OptionnalBiomeName } from 'src/biomes';
-import { Rect, Size, Vector } from 'src/utils/math2d';
+import { Rect, ISize, Vector } from 'src/utils/math2d';
 
 import { Layer } from '../layer';
 
@@ -65,7 +65,7 @@ function prepareFrequencies(biomes: Partial<BiomesFrequencies>, emptyBiome: Opti
   return cumulated;
 }
 
-function randomMatrix(size: Size, biomes: Partial<BiomesFrequencies>, seed: string | undefined, emptyBiome: OptionnalBiomeName): BiomeMatrix {
+function randomMatrix(size: ISize, biomes: Partial<BiomesFrequencies>, seed: string | undefined, emptyBiome: OptionnalBiomeName): BiomeMatrix {
   // Initiate
   const frequencies = prepareFrequencies(biomes, emptyBiome);
   const matrix: BiomeMatrix = [];
@@ -108,7 +108,7 @@ function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: Vector, empt
   return biomes;
 }
 
-export function cellularLayer(size: Size, biomes: Partial<BiomesFrequencies>, options: CellularOptions = {}): Layer {
+export function cellularLayer(size: ISize, biomes: Partial<BiomesFrequencies>, options: CellularOptions = {}): Layer {
   const {
     seed,
     iterations = 5,

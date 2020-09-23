@@ -1,7 +1,7 @@
 import { ArgsArray } from '../types';
 
 import { IRect, parseRectArgs, RectArgs } from './rect';
-import { Size } from './size';
+import { ISize, parseSizeArgs, SizeArgs } from './size';
 
 // Types
 export type VectorOrderMode = 'xy' | 'yx';
@@ -51,7 +51,10 @@ export class Vector implements IVector {
   }
 
   // Static methods
-  static fromSize(s: Size): Vector {
+  static fromSize(s: ISize): Vector;
+  static fromSize(w: number, h: number): Vector;
+  static fromSize(...args: SizeArgs): Vector {
+    const [s] = parseSizeArgs(args);
     return new Vector(s.w, s.h);
   }
 

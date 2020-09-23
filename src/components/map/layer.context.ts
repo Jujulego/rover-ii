@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react';
 
-import { NULL_SIZE, NULL_VECTOR, Size, Vector } from 'src/utils/math2d';
+import { NULL_SIZE, NULL_VECTOR, ISize, Vector } from 'src/utils/math2d';
 
 // Types
 export interface LayerContextProps {
   center: Vector;
-  containerSize: Size;
+  containerSize: ISize;
   tileSize: number;
 }
 

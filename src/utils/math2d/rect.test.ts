@@ -31,7 +31,7 @@ test('Rect.fromVectors', () => {
 });
 
 test('Rect.fromVectorSize', () => {
-  expect(Rect.fromVectorSize(1, 1, { w: 1, h: 1 }))
+  expect(Rect.fromVectorSize(1, 1, 1, 1))
     .toEqual({ t: 1, l: 1, b: 2, r: 2 });
 });
 
