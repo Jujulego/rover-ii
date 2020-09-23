@@ -1,6 +1,6 @@
 import { BiomeName, OptionnalBiomeName } from 'src/biomes';
 
-import Math2D, { NULL_RECT, IRect, Vector, VectorOrderMode } from 'src/utils/math2d';
+import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
 import { sindexOf } from 'src/utils/sfind';
 
 // Types
@@ -75,7 +75,7 @@ export class Layer {
       bbox.l = Math.min(bbox.l, tile.pos.x);
     }
 
-    this._bbox = bbox;
+    this._bbox = new Rect(bbox);
   }
 
   indexOfTile(pos: Vector): number {
@@ -102,15 +102,15 @@ export class Layer {
     return new Layer(tiles);
   }
 
-  sublayer(bbox: IRect): Layer {
+  sublayer(bbox: Rect): Layer {
     // Simple cases
-    if (Math2D.Rect.within(this.bbox, bbox)) return this;
+    if (this.bbox.within(bbox)) return this;
 
     // Compute sublayer
     const tiles: Tile[] = [];
 
     for (const tile of this.tiles) {
-      if (Math2D.Rect.within(tile.pos, bbox)) {
+      if (tile.pos.within(bbox)) {
         tiles.push(tile);
       }
     }
@@ -119,7 +119,7 @@ export class Layer {
   }
 
   // Properties
-  get bbox(): IRect {
+  get bbox(): Rect {
     return this._bbox;
   }
 }

@@ -77,52 +77,14 @@ export class Rect implements IRect {
   }
 
   // Methods
-  within(u: IVector | IRect): boolean {
-    if (isRect(u)) {
-      return u.l >= this.l && u.r <= this.r && u.t >= this.t && u.b <= this.b;
-    }
+  within(r: IRect): boolean;
+  within(t: number, l: number, b: number, r: number): boolean;
+  within(...args: RectArgs): boolean {
+    const [r] = parseRectArgs(args);
 
-    return u.x >= this.l && u.x <= this.r && u.y >= this.t && u.y <= this.b;
+    return this.l >= r.l && this.r <= r.r && this.t >= r.t && this.b <= r.b;
   }
 }
 
 // Constants
 export const NULL_RECT = new Rect(0, 0, 0, 0);
-
-// Namespace
-const RectNS = {
-  // Functions
-  // - builders
-  fromVector(u: IVector): IRect {
-    return this.fromVectors(NULL_VECTOR, u);
-  },
-
-  fromVectors(u: IVector, v: IVector): IRect {
-    return {
-      t: Math.min(u.y, v.y),
-      r: Math.max(u.x, v.x),
-      b: Math.max(u.y, v.y),
-      l: Math.min(u.x, v.x),
-    };
-  },
-
-  fromVectorSize(u: IVector, s: Size): IRect {
-    return {
-      t: u.y,
-      r: u.x + s.w,
-      b: u.y + s.h,
-      l: u.x,
-    };
-  },
-
-  // - tests
-  within(u: IVector | IRect, rect: IRect): boolean {
-    if (isRect(u)) {
-      return u.l >= rect.l && u.r <= rect.r && u.t >= rect.t && u.b <= rect.b;
-    }
-
-    return u.x >= rect.l && u.x <= rect.r && u.y >= rect.t && u.y <= rect.b;
-  }
-};
-
-export default RectNS;

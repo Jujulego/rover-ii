@@ -1,5 +1,6 @@
 import { ArgsArray } from '../types';
 
+import { IRect, parseRectArgs, RectArgs } from './rect';
 import { Size } from './size';
 
 // Types
@@ -88,6 +89,13 @@ export class Vector implements IVector {
     }
   }
 
+  within(r: IRect): boolean;
+  within(t: number, l: number, b: number, r: number): boolean;
+  within(...args: RectArgs): boolean {
+    const [r] = parseRectArgs(args);
+    return this.x >= r.l && this.x <= r.r && this.y >= r.t && this.y <= r.b;
+  }
+
   add(v: IVector): Vector;
   add(x: number, y: number): Vector;
   add(...args: VectorArgs): Vector {
@@ -118,70 +126,3 @@ export class Vector implements IVector {
 
 // Constants
 export const NULL_VECTOR = new Vector(0, 0);
-
-// Namespace
-const VectorNS = {
-  // Functions
-  // - builders
-  fromSize(s: Size): IVector {
-    return { x: s.w, y: s.h };
-  },
-
-  // - unary operations
-  norm(u: IVector): number {
-    return Math.sqrt(u.x * u.x + u.y * u.y);
-  },
-
-  unit(u: IVector): IVector {
-    if (this.equals(u, NULL_VECTOR)) {
-      return NULL_VECTOR;
-    }
-
-    return this.div(u, this.norm(u));
-  },
-
-  // - binary operations
-  equals(u: IVector, v: IVector): boolean {
-    return u.x === v.x && u.y === v.y;
-  },
-
-  add(u: IVector, v: IVector): IVector {
-    return {
-      x: u.x + v.x,
-      y: u.y + v.y
-    };
-  },
-
-  sub(u: IVector, v: IVector): IVector {
-    return {
-      x: u.x - v.x,
-      y: u.y - v.y
-    };
-  },
-
-  mul(u: IVector, k: number): IVector {
-    return {
-      x: k * u.x,
-      y: k * u.y
-    };
-  },
-
-  div(u: IVector, k: number): IVector {
-    return {
-      x: Math.round(u.x / k),
-      y: Math.round(u.y / k)
-    };
-  },
-
-  compare(u: IVector, v: IVector, mode: VectorOrderMode = 'xy'): number {
-    const d = this.sub(v, u);
-
-    if (mode === 'xy') {
-      return d.x === 0 ? d.y : d.x;
-    } else {
-      return d.y === 0 ? d.x : d.y;
-    }
-  }
-};
-
-export default VectorNS;
