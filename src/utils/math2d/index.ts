@@ -12,3 +12,4 @@ const Math2D = {
 };
 
 export default Math2D;
+export { ArgsArray } from '../types';

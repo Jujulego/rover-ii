@@ -1,3 +1,5 @@
+import { ArgsArray } from '../types';
+
 import { Size } from './size';
 
 // Types
@@ -7,15 +9,13 @@ export interface IVector {
   y: number;
 }
 
-type ArgsArray<R extends Array<any>, O extends Array<any> = []> = [...R] | [...R, ...O];
 export type VectorArgs<R extends Array<any> = [], O extends Array<any> = []>
   = ArgsArray<[IVector, ...R], O> | ArgsArray<[number, number, ...R], O>;
 
 // Utils
-function parseArgs<R extends Array<any>, O extends Array<any>>(args: VectorArgs<R, O>): ArgsArray<[IVector, ...R], O> {
+export function parseVectorArgs<R extends Array<any>, O extends Array<any>>(args: VectorArgs<R, O>): ArgsArray<[IVector, ...R], O> {
   if (typeof args[0] === 'object') {
-    const [v, ...others] = args as ArgsArray<[IVector, ...R], O>;
-    return [v, ...others];
+    return args as ArgsArray<[IVector, ...R], O>;
   }
 
   if (args[1] !== undefined) {
@@ -24,6 +24,14 @@ function parseArgs<R extends Array<any>, O extends Array<any>>(args: VectorArgs<
   }
 
   throw new Error('If arg1 is a number, arg2 must be defined !');
+}
+
+export function isVector(obj: any): obj is IVector {
+  if (typeof obj === 'object') {
+    return typeof obj.x === 'number' && typeof obj.y === 'number';
+  }
+
+  return false;
 }
 
 // Class
@@ -36,7 +44,7 @@ export class Vector implements IVector {
   constructor(u: IVector);
   constructor(x: number, y: number);
   constructor(...args: VectorArgs) {
-    const [{ x, y }] = parseArgs(args);
+    const [{ x, y }] = parseVectorArgs(args);
     this.x = x;
     this.y = y;
   }
@@ -61,7 +69,7 @@ export class Vector implements IVector {
   equals(v: IVector): boolean;
   equals(x: number, y: number): boolean;
   equals(...args: VectorArgs): boolean {
-    const [v] = parseArgs(args);
+    const [v] = parseVectorArgs(args);
     return this.x === v.x && this.y === v.y;
   }
 
@@ -70,7 +78,7 @@ export class Vector implements IVector {
   compare(x: number, y: number): number;
   compare(x: number, y: number, order: VectorOrderMode): number;
   compare(...args: VectorArgs<[], [VectorOrderMode]>): number {
-    const [v, order = 'xy'] = parseArgs(args);
+    const [v, order = 'xy'] = parseVectorArgs(args);
     const d = this.sub(v);
 
     if (order === 'xy') {
@@ -83,14 +91,14 @@ export class Vector implements IVector {
   add(v: IVector): Vector;
   add(x: number, y: number): Vector;
   add(...args: VectorArgs): Vector {
-    const [v] = parseArgs(args);
+    const [v] = parseVectorArgs(args);
     return new Vector(this.x + v.x, this.y + v.y);
   }
 
   sub(v: IVector): Vector;
   sub(x: number, y: number): Vector;
   sub(...args: VectorArgs): Vector {
-    const [v] = parseArgs(args);
+    const [v] = parseVectorArgs(args);
     return new Vector(this.x - v.x, this.y - v.y);
   }
 
@@ -110,15 +118,6 @@ export class Vector implements IVector {
 
 // Constants
 export const NULL_VECTOR = new Vector(0, 0);
-
-// Utils
-export function isVector(obj: any): obj is IVector {
-  if (typeof obj === 'object') {
-    return typeof obj.x === 'number' && typeof obj.y === 'number';
-  }
-
-  return false;
-}
 
 // Namespace
 const VectorNS = {
