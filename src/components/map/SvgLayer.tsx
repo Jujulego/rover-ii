@@ -34,9 +34,9 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
         <path key={i}
           d={path.path}
           fill={BIOMES[path.biome].color}
-          stroke={BIOMES[path.biome].color}
+          stroke="red"
           strokeLinecap="square"
-          strokeWidth={1}
+          strokeWidth={.1}
         />
       )) }
     </svg>
