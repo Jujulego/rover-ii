@@ -20,7 +20,7 @@ export class Path {
   }
 
   // - rendering
-  private render(corners: Corners): string {
+  private renderZone(corners: Corners): string {
     // no tiles
     if (this.length === 0) {
       return '';
@@ -88,12 +88,24 @@ export class Path {
     return path + 'Z';
   }
 
-  renderFlatZone(): string {
-    return this.render({
-      tl: pt => `${pt.x} ${pt.y}`,
-      bl: pt => `${pt.x} ${pt.y + 1}`,
-      br: pt => `${pt.x + 1} ${pt.y + 1}`,
-      tr: pt => `${pt.x + 1} ${pt.y}`
+  renderFlatZone(dx: number, dy: number): string {
+    return this.renderZone({
+      tl: pt => `${dx + pt.x    } ${dy + pt.y    }`,
+      bl: pt => `${dx + pt.x    } ${dy + pt.y + 1}`,
+      br: pt => `${dx + pt.x + 1} ${dy + pt.y + 1}`,
+      tr: pt => `${dx + pt.x + 1} ${dy + pt.y    }`
+    });
+  }
+
+  renderIsometricZone(dx: number, dy: number, z: number): string {
+    const w = Math.tan(Math.PI / 3);
+    const h = 1;
+
+    return this.renderZone({
+      tl: pt => `${dx + (pt.x - pt.y    ) * w * .5} ${dy + (pt.x + pt.y    ) * h * .5 - z}`,
+      bl: pt => `${dx + (pt.x - pt.y - 1) * w * .5} ${dy + (pt.x + pt.y + 1) * h * .5 - z}`,
+      br: pt => `${dx + (pt.x - pt.y    ) * w * .5} ${dy + (pt.x + pt.y + 2) * h * .5 - z}`,
+      tr: pt => `${dx + (pt.x - pt.y + 1) * w * .5} ${dy + (pt.x + pt.y + 1) * h * .5 - z}`
     });
   }
 
