@@ -10,29 +10,29 @@ export interface IVector {
   y: number;
 }
 
-export type VectorArgs<R extends Array<any> = [], O extends Array<any> = []>
+export type VectorArgs<R extends any[] = [], O extends any[] = []>
   = ArgsArray<[IVector, ...R], O> | ArgsArray<[number, number, ...R], O>;
 
 // Utils
-export function parseVectorArgs<R extends Array<any>, O extends Array<any>>(args: VectorArgs<R, O>): ArgsArray<[IVector, ...R], O> {
-  if (typeof args[0] === 'object') {
-    return args as ArgsArray<[IVector, ...R], O>;
-  }
-
-  if (args[1] !== undefined) {
-    const [x, y, ...others] = args as ArgsArray<[number, number, ...R], O>;
-    return [{ x, y }, ...others];
-  }
-
-  throw new Error('If arg1 is a number, arg2 must be defined !');
-}
-
 export function isVector(obj: any): obj is IVector {
   if (typeof obj === 'object') {
     return typeof obj.x === 'number' && typeof obj.y === 'number';
   }
 
   return false;
+}
+
+export function parseVectorArgs<R extends any[], O extends any[]>(args: VectorArgs<R, O>): ArgsArray<[IVector, ...R], O> {
+  if (isVector(args[0])) {
+    return args as ArgsArray<[IVector, ...R], O>;
+  }
+
+  if (typeof args[0] === 'number' && typeof args[1] === 'number') {
+    const [x, y, ...others] = args as ArgsArray<[number, number, ...R], O>;
+    return [{ x, y }, ...others];
+  }
+
+  throw new Error('Invalid arguments !');
 }
 
 // Class

@@ -1,6 +1,6 @@
 import { ArgsArray } from '../types';
 
-import { ISize, parseSizeArgs, SizeArgs } from './size';
+import { ISize, parseSizeArgs, Size, SizeArgs } from './size';
 import { VectorArgs, parseVectorArgs, IVector } from './vector';
 
 // Types
@@ -11,23 +11,10 @@ export interface IRect {
   r: number;
 }
 
-export type RectArgs<R extends Array<any> = [], O extends Array<any> = []>
+export type RectArgs<R extends any[] = [], O extends any[] = []>
   = ArgsArray<[IRect, ...R], O> | ArgsArray<[number, number, number, number, ...R], O>;
 
 // Utils
-export function parseRectArgs<R extends Array<any>, O extends Array<any>>(args: RectArgs<R, O>): ArgsArray<[IRect, ...R], O> {
-  if (typeof args[0] === 'object') {
-    return args as ArgsArray<[IRect, ...R], O>;
-  }
-
-  if (args[1] !== undefined && args[2] !== undefined && args[3] !== undefined) {
-    const [t, l, b, r, ...others] = args as ArgsArray<[number, number, number, number, ...R], O>;
-    return [{ t, l, b, r }, ...others];
-  }
-
-  throw new Error('If arg1 is a number, arg2, arg3 and arg4 must be defined !');
-}
-
 export function isRect(obj: any): obj is IRect {
   if (typeof obj === 'object') {
     return typeof obj.t === 'number'
@@ -37,6 +24,19 @@ export function isRect(obj: any): obj is IRect {
   }
 
   return false;
+}
+
+export function parseRectArgs<R extends any[], O extends any[]>(args: RectArgs<R, O>): ArgsArray<[IRect, ...R], O> {
+  if (isRect(args[0])) {
+    return args as ArgsArray<[IRect, ...R], O>;
+  }
+
+  if (typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number' && typeof args[3] === 'number') {
+    const [t, l, b, r, ...others] = args as ArgsArray<[number, number, number, number, ...R], O>;
+    return [{ t, l, b, r }, ...others];
+  }
+
+  throw new Error('Invalid arguments !');
 }
 
 // Class
@@ -93,6 +93,11 @@ export class Rect implements IRect {
     const [r] = parseRectArgs(args);
 
     return this.l >= r.l && this.r <= r.r && this.t >= r.t && this.b <= r.b;
+  }
+
+  // Properties
+  get size(): Size {
+    return new Size(this.r - this.l, this.b - this.t);
   }
 }
 

@@ -6,21 +6,30 @@ export interface ISize {
   h: number;
 }
 
-export type SizeArgs<R extends Array<any> = [], O extends Array<any> = []>
+export type SizeArgs<R extends any[] = [], O extends any[] = []>
   = ArgsArray<[ISize, ...R], O> | ArgsArray<[number, number, ...R], O>;
 
 // Utils
-export function parseSizeArgs<R extends Array<any>, O extends Array<any>>(args: SizeArgs<R, O>): ArgsArray<[ISize, ...R], O> {
-  if (typeof args[0] === 'object') {
+export function isSize(obj: any): obj is ISize {
+  if (typeof obj === 'object') {
+    return typeof obj.w === 'number'
+      && typeof obj.h === 'number';
+  }
+
+  return false;
+}
+
+export function parseSizeArgs<R extends any[], O extends any[]>(args: SizeArgs<R, O>): ArgsArray<[ISize, ...R], O> {
+  if (isSize(args[0])) {
     return args as ArgsArray<[ISize, ...R], O>;
   }
 
-  if (args[1] !== undefined) {
+  if (typeof args[0] === 'number' && typeof args[1] === 'number') {
     const [w, h, ...others] = args as ArgsArray<[number, number, ...R], O>;
     return [{ w, h }, ...others];
   }
 
-  throw new Error('If arg1 is a number, arg2 must be defined !');
+  throw new Error('Invalid arguments !');
 }
 
 // Class

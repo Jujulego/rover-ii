@@ -1,5 +1,5 @@
 import { BiomeName } from 'src/biomes';
-import { ISize } from 'src/utils/math2d';
+import { ISize, Vector } from 'src/utils/math2d';
 
 import { Layer, Tile } from '../layer';
 
@@ -11,7 +11,7 @@ export function simpleLayer(size: ISize, biome: BiomeName): Layer {
     for (let x = 0; x < size.w; ++x) {
       if (biome) {
         tiles.push({
-          pos: { x, y },
+          pos: new Vector(x, y),
           biome
         });
       }
