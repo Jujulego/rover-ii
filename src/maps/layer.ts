@@ -1,4 +1,4 @@
-import { BiomeName, OptionnalBiomeName } from 'src/biomes';
+import { BiomeName, OptionalBiomeName } from 'src/biomes';
 
 import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
 import { sindexOf } from 'src/utils/sfind';
@@ -30,7 +30,7 @@ export class Layer {
   }
 
   // Static methods
-  static fromMatrix(matrix: OptionnalBiomeName[][]): Layer {
+  static fromMatrix(matrix: OptionalBiomeName[][]): Layer {
     const tiles: Tile[] = [];
 
     for (let y = 0; y < matrix.length; ++y) {

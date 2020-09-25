@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom';
 
-import { OPT_BIOME_NAMES, OptionnalBiomeName } from 'src/biomes';
+import { OPT_BIOME_NAMES, OptionalBiomeName } from 'src/biomes';
 import { Rect, ISize, Vector } from 'src/utils/math2d';
 
 import { Layer } from '../layer';
@@ -18,13 +18,13 @@ const DIRECTIONS = [
 ];
 
 // Type
-export type BiomeMatrix = OptionnalBiomeName[][];
-export type BiomesFrequencies = Record<OptionnalBiomeName, number>;
+export type BiomeMatrix = OptionalBiomeName[][];
+export type BiomesFrequencies = Record<OptionalBiomeName, number>;
 
 export interface CellularOptions {
   seed?: string;
   iterations?: number;
-  emptyBiome?: OptionnalBiomeName;
+  emptyBiome?: OptionalBiomeName;
 }
 
 // Utils
@@ -39,7 +39,7 @@ function biomesFrequencies(): BiomesFrequencies {
 }
 
 // Generator
-function prepareFrequencies(biomes: Partial<BiomesFrequencies>, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
+function prepareFrequencies(biomes: Partial<BiomesFrequencies>, emptyBiome: OptionalBiomeName): BiomesFrequencies {
   // Compute cumulated frequencies
   const cumulated = biomesFrequencies();
   let sum = 0;
@@ -65,7 +65,7 @@ function prepareFrequencies(biomes: Partial<BiomesFrequencies>, emptyBiome: Opti
   return cumulated;
 }
 
-function randomMatrix(size: ISize, biomes: Partial<BiomesFrequencies>, seed: string | undefined, emptyBiome: OptionnalBiomeName): BiomeMatrix {
+function randomMatrix(size: ISize, biomes: Partial<BiomesFrequencies>, seed: string | undefined, emptyBiome: OptionalBiomeName): BiomeMatrix {
   // Initiate
   const frequencies = prepareFrequencies(biomes, emptyBiome);
   const matrix: BiomeMatrix = [];
@@ -90,7 +90,7 @@ function randomMatrix(size: ISize, biomes: Partial<BiomesFrequencies>, seed: str
   return matrix;
 }
 
-function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: Vector, emptyBiome: OptionnalBiomeName): BiomesFrequencies {
+function evaluateSurroundings(matrix: BiomeMatrix, bbox: Rect, pos: Vector, emptyBiome: OptionalBiomeName): BiomesFrequencies {
   // Initiate
   const biomes = biomesFrequencies();
 
