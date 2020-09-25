@@ -1,18 +1,20 @@
-import { Size } from './size';
+import { ArgsArray } from '../types';
+
+import { IRect, parseRectArgs, RectArgs } from './rect';
+import { ISize, parseSizeArgs, SizeArgs } from './size';
 
 // Types
-export interface Vector {
+export type VectorOrderMode = 'xy' | 'yx';
+export interface IVector {
   x: number;
   y: number;
 }
 
-export type VectorOrderMode = 'xy' | 'yx';
-
-// Constants
-export const NULL_VECTOR = { x: 0, y: 0 };
+export type VectorArgs<R extends any[] = [], O extends any[] = []>
+  = ArgsArray<[IVector, ...R], O> | ArgsArray<[number, number, ...R], O>;
 
 // Utils
-export function isVector(obj: any): obj is Vector {
+export function isVector(obj: any): obj is IVector {
   if (typeof obj === 'object') {
     return typeof obj.x === 'number' && typeof obj.y === 'number';
   }
@@ -20,69 +22,110 @@ export function isVector(obj: any): obj is Vector {
   return false;
 }
 
-// Namespace
-const VectorNS = {
-  // Functions
-  // - builders
-  fromSize(s: Size): Vector {
-    return { x: s.w, y: s.h };
-  },
+export function parseVectorArgs<R extends any[], O extends any[]>(args: VectorArgs<R, O>): ArgsArray<[IVector, ...R], O> {
+  if (isVector(args[0])) {
+    return args as ArgsArray<[IVector, ...R], O>;
+  }
 
+  if (typeof args[0] === 'number' && typeof args[1] === 'number') {
+    const [x, y, ...others] = args as ArgsArray<[number, number, ...R], O>;
+    return [{ x, y }, ...others];
+  }
+
+  throw new Error('Invalid arguments !');
+}
+
+// Class
+export class Vector implements IVector {
+  // Attributes
+  public x: number;
+  public y: number;
+
+  // Constructor
+  constructor(u: IVector);
+  constructor(x: number, y: number);
+  constructor(...args: VectorArgs) {
+    const [{ x, y }] = parseVectorArgs(args);
+    this.x = x;
+    this.y = y;
+  }
+
+  // Static methods
+  static fromSize(s: ISize): Vector;
+  static fromSize(w: number, h: number): Vector;
+  static fromSize(...args: SizeArgs): Vector {
+    const [s] = parseSizeArgs(args);
+    return new Vector(s.w, s.h);
+  }
+
+  // Methods
   // - unary operations
-  norm(u: Vector): number {
-    return Math.sqrt(u.x * u.x + u.y * u.y);
-  },
+  norm(): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
 
-  unit(u: Vector): Vector {
-    if (this.equals(u, NULL_VECTOR)) {
-      return NULL_VECTOR;
-    }
-
-    return this.div(u, this.norm(u));
-  },
+  unit(): Vector {
+    if (this.isNull) return NULL_VECTOR;
+    return this.div(this.norm());
+  }
 
   // - binary operations
-  equals(u: Vector, v: Vector): boolean {
-    return u.x === v.x && u.y === v.y;
-  },
+  equals(v: IVector): boolean;
+  equals(x: number, y: number): boolean;
+  equals(...args: VectorArgs): boolean {
+    const [v] = parseVectorArgs(args);
+    return this.x === v.x && this.y === v.y;
+  }
 
-  add(u: Vector, v: Vector): Vector {
-    return {
-      x: u.x + v.x,
-      y: u.y + v.y
-    };
-  },
+  compare(v: IVector): number;
+  compare(v: IVector, order: VectorOrderMode): number;
+  compare(x: number, y: number): number;
+  compare(x: number, y: number, order: VectorOrderMode): number;
+  compare(...args: VectorArgs<[], [VectorOrderMode]>): number {
+    const [v, order = 'xy'] = parseVectorArgs(args);
+    const d = this.sub(v);
 
-  sub(u: Vector, v: Vector): Vector {
-    return {
-      x: u.x - v.x,
-      y: u.y - v.y
-    };
-  },
-
-  mul(u: Vector, k: number): Vector {
-    return {
-      x: k * u.x,
-      y: k * u.y
-    };
-  },
-
-  div(u: Vector, k: number): Vector {
-    return {
-      x: Math.round(u.x / k),
-      y: Math.round(u.y / k)
-    };
-  },
-
-  compare(u: Vector, v: Vector, mode: VectorOrderMode = 'xy'): number {
-    const d = this.sub(v, u);
-
-    if (mode === 'xy') {
-      return d.x === 0 ? d.y : d.x;
+    if (order === 'xy') {
+      return d.x === 0 ? -d.y : -d.x;
     } else {
-      return d.y === 0 ? d.x : d.y;
+      return d.y === 0 ? -d.x : -d.y;
     }
   }
-};
 
-export default VectorNS;
+  within(r: IRect): boolean;
+  within(t: number, l: number, b: number, r: number): boolean;
+  within(...args: RectArgs): boolean {
+    const [r] = parseRectArgs(args);
+    return this.x >= r.l && this.x <= r.r && this.y >= r.t && this.y <= r.b;
+  }
+
+  add(v: IVector): Vector;
+  add(x: number, y: number): Vector;
+  add(...args: VectorArgs): Vector {
+    const [v] = parseVectorArgs(args);
+    return new Vector(this.x + v.x, this.y + v.y);
+  }
+
+  sub(v: IVector): Vector;
+  sub(x: number, y: number): Vector;
+  sub(...args: VectorArgs): Vector {
+    const [v] = parseVectorArgs(args);
+    return new Vector(this.x - v.x, this.y - v.y);
+  }
+
+  mul(k: number): Vector {
+    return new Vector(this.x * k, this.y * k);
+  }
+
+  div(k: number): Vector {
+    return new Vector(this.x / k, this.y / k);
+  }
+
+  // Properties
+  get isNull(): boolean {
+    return this.x === 0 && this.y === 0;
+  }
+}
+
+// Constants
+export const NULL_VECTOR = new Vector(0, 0);

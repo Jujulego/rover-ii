@@ -1,7 +1,7 @@
 import React, { ReactElement, useMemo } from 'react';
 
 import { Layer as LayerData, Tile as TileData } from 'src/maps/layer';
-import Math2D from 'src/utils/math2d';
+import { Rect, Vector } from 'src/utils/math2d';
 
 import { useLayer } from './layer.context';
 
@@ -20,14 +20,14 @@ const Layer = (props: LayerProps): ReactElement => {
 
   // Memos
   const bbox = useMemo(() => {
-    let size = Math2D.Vector.fromSize(containerSize);
-    size = Math2D.Vector.div(size, tileSize);
-    size = Math2D.Vector.add(size, { x: 1, y: 1 });
+    let size = Vector.fromSize(containerSize);
+    size = size.div(tileSize);
+    size = size.add(1, 1);
 
-    const tl = Math2D.Vector.sub(center, size);
-    const br = Math2D.Vector.add(center, size);
+    const tl = center.sub(size);
+    const br = center.add(size);
 
-    return Math2D.Rect.fromVectors(tl, br);
+    return Rect.fromVectors(tl, br);
   }, [center, containerSize, tileSize]);
 
   const sublayer = useMemo(() => layer.sublayer(bbox), [layer, bbox]);

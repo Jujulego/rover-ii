@@ -1,64 +1,105 @@
-import { Size } from './size';
-import { NULL_VECTOR, Vector } from './vector';
+import { ArgsArray } from '../types';
+
+import { ISize, parseSizeArgs, Size, SizeArgs } from './size';
+import { VectorArgs, parseVectorArgs, IVector } from './vector';
 
 // Types
-export interface Rect {
+export interface IRect {
   t: number;
-  r: number;
-  b: number;
   l: number;
+  b: number;
+  r: number;
 }
 
-// Constants
-export const NULL_RECT = { t: 0, r: 0, b: 0, l: 0 };
+export type RectArgs<R extends any[] = [], O extends any[] = []>
+  = ArgsArray<[IRect, ...R], O> | ArgsArray<[number, number, number, number, ...R], O>;
 
 // Utils
-export function isRect(obj: any): obj is Rect {
+export function isRect(obj: any): obj is IRect {
   if (typeof obj === 'object') {
     return typeof obj.t === 'number'
-      && typeof obj.r === 'number'
+      && typeof obj.l === 'number'
       && typeof obj.b === 'number'
-      && typeof obj.l === 'number';
+      && typeof obj.r === 'number';
   }
 
   return false;
 }
 
-
-// Namespace
-const RectNS = {
-  // Functions
-  // - builders
-  fromVector(u: Vector): Rect {
-    return this.fromVectors(NULL_VECTOR, u);
-  },
-
-  fromVectors(u: Vector, v: Vector): Rect {
-    return {
-      t: Math.min(u.y, v.y),
-      r: Math.max(u.x, v.x),
-      b: Math.max(u.y, v.y),
-      l: Math.min(u.x, v.x),
-    };
-  },
-
-  fromVectorSize(u: Vector, s: Size): Rect {
-    return {
-      t: u.y,
-      r: u.x + s.w,
-      b: u.y + s.h,
-      l: u.x,
-    };
-  },
-
-  // - tests
-  within(u: Vector | Rect, rect: Rect): boolean {
-    if (isRect(u)) {
-      return u.l >= rect.l && u.r <= rect.r && u.t >= rect.t && u.b <= rect.b;
-    }
-
-    return u.x >= rect.l && u.x <= rect.r && u.y >= rect.t && u.y <= rect.b;
+export function parseRectArgs<R extends any[], O extends any[]>(args: RectArgs<R, O>): ArgsArray<[IRect, ...R], O> {
+  if (isRect(args[0])) {
+    return args as ArgsArray<[IRect, ...R], O>;
   }
-};
 
-export default RectNS;
+  if (typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number' && typeof args[3] === 'number') {
+    const [t, l, b, r, ...others] = args as ArgsArray<[number, number, number, number, ...R], O>;
+    return [{ t, l, b, r }, ...others];
+  }
+
+  throw new Error('Invalid arguments !');
+}
+
+// Class
+export class Rect implements IRect {
+  // Attributes
+  public t: number;
+  public l: number;
+  public b: number;
+  public r: number;
+
+  // Constructor
+  constructor(r: IRect);
+  constructor(t: number, l: number, b: number, r: number);
+  constructor(...args: RectArgs) {
+    const [{ t, l, b, r }] = parseRectArgs(args);
+    this.t = t;
+    this.l = l;
+    this.b = b;
+    this.r = r;
+  }
+
+  // Static methods
+  static fromVectors(u: IVector, v: IVector): Rect;
+  static fromVectors(xu: number, yu: number, v: IVector): Rect;
+  static fromVectors(u: IVector, xv: number, yv: number): Rect;
+  static fromVectors(xu: number, yu: number, xv: number, yv: number): Rect;
+  static fromVectors(...args: VectorArgs<VectorArgs>): Rect {
+    const [u, ...others] = parseVectorArgs(args);
+    const [v] = parseVectorArgs(others);
+
+    return new Rect(
+      Math.min(u.y, v.y),
+      Math.min(u.x, u.x),
+      Math.max(u.y, v.y),
+      Math.max(u.x, v.x),
+    );
+  }
+
+  static fromVectorSize(u: IVector, s: ISize): Rect;
+  static fromVectorSize(x: number, y: number, s: ISize): Rect;
+  static fromVectorSize(u: IVector, w: number, h: number): Rect;
+  static fromVectorSize(x: number, y: number, w: number, h: number): Rect;
+  static fromVectorSize(...args: VectorArgs<SizeArgs>): Rect {
+    const [u, ...others] = parseVectorArgs(args);
+    const [s] = parseSizeArgs(others);
+
+    return new Rect(u.y, u.x, u.y + s.h, u.x + s.w);
+  }
+
+  // Methods
+  within(r: IRect): boolean;
+  within(t: number, l: number, b: number, r: number): boolean;
+  within(...args: RectArgs): boolean {
+    const [r] = parseRectArgs(args);
+
+    return this.l >= r.l && this.r <= r.r && this.t >= r.t && this.b <= r.b;
+  }
+
+  // Properties
+  get size(): Size {
+    return new Size(this.r - this.l, this.b - this.t);
+  }
+}
+
+// Constants
+export const NULL_RECT = new Rect(0, 0, 0, 0);

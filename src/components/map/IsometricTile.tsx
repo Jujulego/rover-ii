@@ -55,7 +55,7 @@ const IsometricTile: FC<IsometricTileProps> = (props) => {
   // Callbacks
   const handleClick = useCallback(() => {
     if (onClick) {
-      onClick({ x, y });
+      onClick(new Vector(x, y));
     }
   }, [onClick, x, y]);
 

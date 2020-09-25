@@ -1,5 +1,5 @@
 import { BiomeName } from 'src/biomes';
-import Math2D, { Vector } from 'src/utils/math2d';
+import { Vector } from 'src/utils/math2d';
 
 import { Layer, Tile } from './layer';
 
@@ -50,7 +50,7 @@ function filterTiles(layer: Layer): Layer {
     let same = 0;
 
     for (const dir of FILTER_DIRECTIONS) {
-      const p = Math2D.Vector.add(tile.pos, dir);
+      const p = tile.pos.add(dir);
       const t = layer.tile(p);
 
       if (t?.biome === tile.biome) {
@@ -78,20 +78,20 @@ function buildPath(layer: Layer, start: Vector): string {
   layer.remove(start);
 
   // Initiate
-  let previous = Math2D.Vector.sub(start, { x: 0, y: -1 });
+  let previous = start.sub(0, -1);
   let pos = start;
 
   do {
     // Compute "back" direction (go from pos to previous) => it will be the last evaluated
-    const back = Math2D.Vector.sub(previous, pos);
-    const si = BUILD_DIRECTIONS.findIndex(d => Math2D.Vector.equals(d, back));
+    const back = previous.sub(pos);
+    const si = BUILD_DIRECTIONS.findIndex(d => back.equals(d));
 
     // Search for a valid next tile
     let found = false;
 
     for (let i = 0; i < BUILD_DIRECTIONS.length; ++i) {
       const dir = BUILD_DIRECTIONS[(si + 1 + i) % BUILD_DIRECTIONS.length];
-      const next = Math2D.Vector.add(pos, dir);
+      const next = pos.add(dir);
       const tile = biomes.tile(next);
 
       // Check if valid next value
@@ -102,7 +102,7 @@ function buildPath(layer: Layer, start: Vector): string {
       found = true;
       layer.remove(next);
 
-      if (Math2D.Vector.equals(dir, back)) {
+      if (back.equals(dir)) {
         path += ` l ${back.x * -.5} ${back.y * -.5}`;
       }
 
@@ -120,10 +120,10 @@ function buildPath(layer: Layer, start: Vector): string {
       return path + ' Z';
     }
 
-  } while (!Math2D.Vector.equals(pos, start));
+  } while (!pos.equals(start));
 
   // Push to the "end" of the last tile
-  const back = Math2D.Vector.sub(previous, pos);
+  const back = previous.sub(pos);
   path += ` l ${back.x * -.5} ${back.y * -.5}`;
 
   return path + ' Z';

@@ -1,6 +1,6 @@
-import { BiomeName, OptionnalBiomeName } from 'src/biomes';
+import { BiomeName, OptionalBiomeName } from 'src/biomes';
 
-import Math2D, { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
+import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
 import { sindexOf } from 'src/utils/sfind';
 
 // Types
@@ -30,7 +30,7 @@ export class Layer {
   }
 
   // Static methods
-  static fromMatrix(matrix: OptionnalBiomeName[][]): Layer {
+  static fromMatrix(matrix: OptionalBiomeName[][]): Layer {
     const tiles: Tile[] = [];
 
     for (let y = 0; y < matrix.length; ++y) {
@@ -41,7 +41,7 @@ export class Layer {
 
         if (biome) {
           tiles.push({
-            pos: { x, y },
+            pos: new Vector(x, y),
             biome
           });
         }
@@ -53,7 +53,7 @@ export class Layer {
 
   // Methods
   private compareVector(a: Vector, b: Vector): number {
-    return Math2D.Vector.compare(a, b, this.options.compareMode || 'xy');
+    return a.compare(b, this.options.compareMode || 'xy');
   }
 
   private setupLayer() {
@@ -75,7 +75,7 @@ export class Layer {
       bbox.l = Math.min(bbox.l, tile.pos.x);
     }
 
-    this._bbox = bbox;
+    this._bbox = new Rect(bbox);
   }
 
   indexOfTile(pos: Vector): number {
@@ -104,13 +104,13 @@ export class Layer {
 
   sublayer(bbox: Rect): Layer {
     // Simple cases
-    if (Math2D.Rect.within(this.bbox, bbox)) return this;
+    if (this.bbox.within(bbox)) return this;
 
     // Compute sublayer
     const tiles: Tile[] = [];
 
     for (const tile of this.tiles) {
-      if (Math2D.Rect.within(tile.pos, bbox)) {
+      if (tile.pos.within(bbox)) {
         tiles.push(tile);
       }
     }

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Layer as LayerData } from 'src/maps/layer';
+import { Vector } from 'src/utils/math2d';
 
 import Map from './map/Map';
 import MiniMap from './map/MiniMap';
@@ -58,7 +59,7 @@ const Navigator: FC<NavigatorProps> = (props) => {
   } = props;
 
   // State
-  const [center, setCenter] = useState({ x: 0, y: 0 });
+  const [center, setCenter] = useState(new Vector(0, 0));
   const [openMiniMap, setOpenMiniMap] = useState(false);
 
   // Callbacks
