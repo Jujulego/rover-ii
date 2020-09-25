@@ -1,5 +1,9 @@
 import { Vector } from 'src/utils/math2d';
 
+// Types
+type Corner = 'tl' | 'bl' | 'br' | 'tr';
+type Corners = Record<Corner, (pt: Vector) => string>;
+
 // Class
 export class Path {
   // Attributes
@@ -15,11 +19,17 @@ export class Path {
     this.points.push(u);
   }
 
-  renderFlatZone(): string {
+  // - rendering
+  private render(corners: Corners): string {
+    // no tiles
+    if (this.length === 0) {
+      return '';
+    }
+
     // 1 tile path
     if (this.length === 1) {
       const pt = this.points[0];
-      return `M ${pt.x} ${pt.y} h 1 v 1 h -1 Z`;
+      return `M ${corners.tl(pt)} L ${corners.bl(pt)} L ${corners.br(pt)} L ${corners.tr(pt)} Z`;
     }
 
     // Build path
@@ -28,88 +38,63 @@ export class Path {
     for (let i = 0; i < this.length; ++i) {
       const cmd = path ? ' L' : 'M';
 
+      // Get points
       const pt = this.points[i];
       const prev = this.cyclicItem(i - 1);
       const next = this.cyclicItem(i + 1);
 
+      // Compute direction and turn test
       const fromPrev = pt.sub(prev);
       const toNext = next.sub(pt);
 
-      const tt = toNext.dot(fromPrev);
-      console.log(`${prev.x},${prev.y} (${fromPrev.x},${fromPrev.y}) => ${pt.x},${pt.y} [${tt}] => ${next.x},${next.y} (${toNext.x},${toNext.y})`);
+      const tt = toNext.dot(fromPrev.normal());
 
+      // Same direction => nothing to do
       if (toNext.equals(fromPrev)) continue;
 
-      if (tt === 0) { // straight (here get back)
+      if (tt === 0) { // Straight (here it goes back)
         if (toNext.x > 0) {
-          path += `${cmd} ${pt.x} ${pt.y} v 1`;
-          continue;
+          path += `${cmd} ${corners.tl(pt)} L ${corners.bl(pt)}`;
+        } else if (toNext.y < 0) {
+          path += `${cmd} ${corners.bl(pt)} L ${corners.br(pt)}`;
+        } else if (toNext.x < 0) {
+          path += `${cmd} ${corners.br(pt)} L ${corners.tr(pt)}`;
+        } else if (toNext.y > 0) {
+          path += `${cmd} ${corners.tr(pt)} L ${corners.tl(pt)}`;
         }
-
-        if (toNext.x < 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y + 1} v -1`;
-          continue;
+      } else if (tt < 0) { // Turn right
+        if (toNext.x > 0) {
+          path += `${cmd} ${corners.br(pt)}`;
+        } else if (toNext.y < 0) {
+          path += `${cmd} ${corners.tr(pt)}`;
+        } else if (toNext.x < 0) {
+          path += `${cmd} ${corners.tl(pt)}`;
+        } else if (toNext.y > 0) {
+          path += `${cmd} ${corners.bl(pt)}`;
         }
-
-        if (toNext.y > 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y} h -1`;
-          continue;
-        }
-
-        if (toNext.y < 0) {
-          path += `${cmd} ${pt.x} ${pt.y + 1} h 1`;
-          continue;
+      } else if (tt > 0) { // Turn left
+        if (toNext.x > 0) {
+          path += `${cmd} ${corners.bl(pt)}`;
+        } else if (toNext.y < 0) {
+          path += `${cmd} ${corners.br(pt)}`;
+        } else if (toNext.x < 0) {
+          path += `${cmd} ${corners.tr(pt)}`;
+        } else if (toNext.y > 0) {
+          path += `${cmd} ${corners.tl(pt)}`;
         }
       }
-
-      if (tt < 0) { // turn right
-        if (toNext.x > 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y + 1}`;
-          continue;
-        }
-
-        if (toNext.x < 0) {
-          path += `${cmd} ${pt.x} ${pt.y}`;
-          continue;
-        }
-
-        if (toNext.y > 0) {
-          path += `${cmd} ${pt.x} ${pt.y + 1}`;
-          continue;
-        }
-
-        if (toNext.y < 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y}`;
-          continue;
-        }
-      }
-
-      if (tt > 0) { // turn left
-        if (toNext.x > 0) {
-          path += `${cmd} ${pt.x} ${pt.y + 1}`;
-          continue;
-        }
-
-        if (toNext.x < 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y}`;
-          continue;
-        }
-
-        if (toNext.y > 0) {
-          path += `${cmd} ${pt.x} ${pt.y}`;
-          continue;
-        }
-
-        if (toNext.y < 0) {
-          path += `${cmd} ${pt.x + 1} ${pt.y + 1}`;
-          continue;
-        }
-      }
-
-      path += `${cmd} ${pt.x + .5} ${pt.y + .5}`;
     }
 
     return path + 'Z';
+  }
+
+  renderFlatZone(): string {
+    return this.render({
+      tl: pt => `${pt.x} ${pt.y}`,
+      bl: pt => `${pt.x} ${pt.y + 1}`,
+      br: pt => `${pt.x + 1} ${pt.y + 1}`,
+      tr: pt => `${pt.x + 1} ${pt.y}`
+    });
   }
 
   // Properties

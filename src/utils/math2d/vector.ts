@@ -130,7 +130,7 @@ export class Vector implements IVector {
   dot(x: number, y: number): number;
   dot(...args: VectorArgs): number {
     const [v] = parseVectorArgs(args);
-    return this.x * v.y - v.x * this.y;
+    return this.x * v.x + this.y * v.y;
   }
 
   // Properties

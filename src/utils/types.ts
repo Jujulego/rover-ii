@@ -1,3 +1,2 @@
 // Types
-export type ArgsArray<Required extends any[], Options extends any[] = []>
-  = Required | [...Required, ...Options];
+export type ArgsArray<R extends any[], O extends any[] = []> = R | [...R, ...O];
