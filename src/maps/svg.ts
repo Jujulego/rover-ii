@@ -1,4 +1,4 @@
-import { BiomeName } from 'src/biomes';
+import { BiomeName, BIOMES } from 'src/biomes';
 import { Vector } from 'src/utils/math2d';
 
 import { Layer, Tile } from './layer';
@@ -24,21 +24,27 @@ const BUILD_DIRECTIONS = [
 ];
 
 // Types
+export interface LayerPath {
+  path: Path;
+  biome: BiomeName;
+}
+
 export interface LayerSvgPath {
   path: string;
   biome: BiomeName;
 }
 
 // Algorithm
-export function renderAsSvgPaths(layer: Layer): LayerSvgPath[] {
-  const paths: LayerSvgPath[] = [];
+export function renderAsPaths(layer: Layer): LayerPath[] {
+  const paths: LayerPath[] = [];
+
   layer = filterTiles(layer);
 
   while (layer.tiles.length > 0) {
     const tile = layer.tiles[0];
     const path = buildPath(layer, tile.pos);
 
-    paths.push({ path: path.renderFlatZone(), biome: tile.biome });
+    paths.push({ path, biome: tile.biome });
   }
 
   return paths;
