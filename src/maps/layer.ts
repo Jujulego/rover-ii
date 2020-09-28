@@ -22,19 +22,20 @@ export class Layer {
   private readonly options: LayerOptions;
 
   // Constructor
-  constructor(tiles: Tile[], options: LayerOptions = {}) {
+  private constructor(tiles: BST<Tile, Vector>, options: LayerOptions = {}) {
     this.options = options;
-    this.tiles = new BST(
-      t => t.pos,
-      (a, b) => a.compare(b, options.compareMode || 'xy'),
-      tiles
-    );
+    this.tiles = tiles;
 
     this.setupLayer();
   }
 
   // Static methods
-  static fromMatrix(matrix: OptionalBiomeName[][]): Layer {
+  static fromArray(tiles: Tile[], options: LayerOptions = {}) {
+    const bst = BST.fromArray(tiles, t => t.pos, (a, b) => a.compare(b, options.compareMode || 'xy'));
+    return new Layer(bst, options);
+  }
+
+  static fromMatrix(matrix: OptionalBiomeName[][], options: LayerOptions = {}): Layer {
     const tiles: Tile[] = [];
 
     for (let y = 0; y < matrix.length; ++y) {
@@ -52,7 +53,7 @@ export class Layer {
       }
     }
 
-    return new Layer(tiles);
+    return Layer.fromArray(tiles, options);
   }
 
   // Methods
@@ -81,7 +82,7 @@ export class Layer {
 
   tile(pos: Vector): Tile | null {
     const i = this.indexOfTile(pos);
-    return i > -1 ? this.tiles[i] : null;
+    return i > -1 ? this.tiles.item(i) : null;
   }
 
   remove(pos: Vector) {
@@ -89,13 +90,7 @@ export class Layer {
   }
 
   copy(): Layer {
-    const tiles: Tile[] = [];
-
-    for (const tile of this.tiles) {
-      tiles.push(tile);
-    }
-
-    return new Layer(tiles);
+    return new Layer(BST.copy(this.tiles), this.options);
   }
 
   sublayer(bbox: Rect): Layer {
@@ -111,7 +106,7 @@ export class Layer {
       }
     }
 
-    return new Layer(tiles);
+    return Layer.fromArray(tiles);
   }
 
   // Properties

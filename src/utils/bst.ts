@@ -6,16 +6,34 @@ export type Comparator<T> = (a: T, b: T) => number;
 export class BST<T, K = T> {
   // Attributes
   private readonly _array: T[];
-  private readonly _map: ExtractKey<T, K>;
+  private readonly _extractor: ExtractKey<T, K>;
   private readonly _comparator: Comparator<K>;
 
   // Constructor
-  constructor(map: (elem: T) => K, comparator: Comparator<K>, elements: T[] = []) {
-    this._map = map;
+  private constructor(extractor: (elem: T) => K, comparator: Comparator<K>, elements: T[] = []) {
+    this._extractor = extractor;
     this._comparator = comparator;
 
     this._array = Array.from(elements)
-      .sort((a, b) => comparator(map(a), map(b)));
+      .sort((a, b) => comparator(extractor(a), extractor(b)));
+  }
+
+  // Statics
+  static fromArray<T, K>(elements: T[], extractor: ExtractKey<T, K>, comparator: Comparator<K>): BST<T, K> {
+    const bst = new BST<T, K>(extractor, comparator as Comparator<K>);
+
+    // Add and sort elements
+    for (const e of elements) {
+      bst._array.push(e);
+    }
+
+    bst._array.sort((a, b) => comparator(extractor(a), extractor(b)));
+
+    return bst;
+  }
+
+  static copy<T, K>(bst: BST<T, K>): BST<T, K> {
+    return this.fromArray(bst._array, bst._extractor, bst._comparator);
   }
 
   // Methods
@@ -27,7 +45,7 @@ export class BST<T, K = T> {
       const mi = Math.floor((ei + si) / 2);
       const obj = this.item(mi);
 
-      const cmp = this._comparator(this._map(obj), elem);
+      const cmp = this._comparator(this._extractor(obj), elem);
       if (cmp === 0) {
         return [mi, obj];
       }
@@ -46,6 +64,7 @@ export class BST<T, K = T> {
     return [0, null];
   }
 
+  // - accessing
   item(i: number): T {
     return this._array[i];
   }
@@ -60,11 +79,12 @@ export class BST<T, K = T> {
     return obj;
   }
 
+  // - modifying
   insert(elem: T) {
-    const key = this._map(elem);
+    const key = this._extractor(elem);
 
     let [idx,] = this.search(key);
-    if (this._comparator(this._map(this._array[idx]), key) <= 0) {
+    if (this._comparator(this._extractor(this._array[idx]), key) <= 0) {
       ++idx;
     }
 
@@ -77,6 +97,11 @@ export class BST<T, K = T> {
     if (obj !== null) {
       this._array.splice(idx, 1);
     }
+  }
+
+  // - iterate
+  *[Symbol.iterator] () {
+    yield* this._array;
   }
 
   map<R>(fn: (elem: T) => R): R[] {

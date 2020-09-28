@@ -18,5 +18,5 @@ export function simpleLayer(size: ISize, biome: BiomeName): Layer {
     }
   }
 
-  return new Layer(tiles);
+  return Layer.fromArray(tiles);
 }
