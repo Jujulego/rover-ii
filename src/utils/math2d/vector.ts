@@ -4,7 +4,6 @@ import { IRect, parseRectArgs, RectArgs } from './rect';
 import { ISize, parseSizeArgs, SizeArgs } from './size';
 
 // Types
-export type VectorOrderMode = 'xy' | 'yx';
 export interface IVector {
   x: number;
   y: number;
@@ -12,6 +11,8 @@ export interface IVector {
 
 export type VectorArgs<R extends any[] = [], O extends any[] = []>
   = ArgsArray<[IVector, ...R], O> | ArgsArray<[number, number, ...R], O>;
+
+export type VectorOrderMode = 'xy' | 'yx';
 
 // Utils
 export function isVector(obj: any): obj is IVector {
@@ -69,6 +70,10 @@ export class Vector implements IVector {
     return this.div(this.norm());
   }
 
+  normal(): Vector {
+    return new Vector(this.y, -this.x);
+  }
+
   // - binary operations
   equals(v: IVector): boolean;
   equals(x: number, y: number): boolean;
@@ -119,6 +124,13 @@ export class Vector implements IVector {
 
   div(k: number): Vector {
     return new Vector(this.x / k, this.y / k);
+  }
+
+  dot(v: IVector): number;
+  dot(x: number, y: number): number;
+  dot(...args: VectorArgs): number {
+    const [v] = parseVectorArgs(args);
+    return this.x * v.x + this.y * v.y;
   }
 
   // Properties
