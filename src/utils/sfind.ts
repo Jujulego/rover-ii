@@ -2,13 +2,7 @@
 export type Comparator<T> = (obj: T) => number;
 
 // Utils
-export function sfind<T>(list: T[], comparator: Comparator<T>): T | undefined {
-  const i = sindexOf(list, comparator);
-
-  return i > -1 ? list[i] : undefined;
-}
-
-export function sindexOf<T>(list: T[], comparator: Comparator<T>): number {
+function search<T>(list: T[], comparator: Comparator<T>): [number, T | null] {
   let si = 0;
   let ei = list.length;
 
@@ -18,7 +12,7 @@ export function sindexOf<T>(list: T[], comparator: Comparator<T>): number {
 
     const cmp = comparator(obj);
     if (cmp === 0) {
-      return mi;
+      return [mi, obj];
     }
 
     if (cmp < 0) {
@@ -26,7 +20,21 @@ export function sindexOf<T>(list: T[], comparator: Comparator<T>): number {
     } else {
       ei = mi;
     }
+
+    if (si === ei) {
+      return [mi, null];
+    }
   }
 
-  return -1;
+  return [0, null];
+}
+
+export function sindexOf<T>(list: T[], comparator: Comparator<T>): number {
+  const [idx, obj] = search(list, comparator);
+  return obj === null ? -1 : idx;
+}
+
+export function sfind<T>(list: T[], comparator: Comparator<T>): T | null {
+  const [, obj] = search(list, comparator);
+  return obj;
 }
