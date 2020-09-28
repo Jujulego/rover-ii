@@ -63,7 +63,7 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       viewBox={`0 0 ${size.w + 1} ${size.h + 1}`}
     >
       { paths.map((path, i) => (
-        <SvgPath bbox={bbox} path={path.path} biome={path.biome} />
+        <SvgPath key={i} bbox={bbox} path={path.path} biome={path.biome} />
       )) }
     </svg>
   );

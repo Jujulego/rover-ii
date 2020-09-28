@@ -80,7 +80,7 @@ export class BST<T, K = T> {
   }
 
   // - modifying
-  insert(elem: T) {
+  insert(elem: T): T {
     const key = this._extractor(elem);
 
     let [idx,] = this.search(key);
@@ -89,6 +89,8 @@ export class BST<T, K = T> {
     }
 
     this._array.splice(idx, 0, elem);
+
+    return elem;
   }
 
   remove(elem: K) {

@@ -22,10 +22,12 @@ const App = () => {
   // Memo
   // const layer = useMemo(() => Generators.simpleLayer({ h: 100, w: 250 }, 'rock'), []);
   const layer = useMemo(() => Generators.cellularLayer(
-    { h: 40, w: 40 },
+    { h: 10, w: 10 },
     { grass: .4, sand: .2 },
     { seed: 'toto', iterations: 5, emptyBiome: 'water' }
   ), []);
+
+  console.log(layer);
 
   // Render
   const styles = useStyle();
