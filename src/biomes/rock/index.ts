@@ -4,4 +4,4 @@ import isometric from './isometric.png';
 import flat from './flat.png';
 
 // Theme
-export default new Biome('#89A4A6', 32, flat, isometric);
+export default new Biome('#b98b5d', 32, flat, isometric);
