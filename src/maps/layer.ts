@@ -1,7 +1,7 @@
 import { BiomeName, OptionalBiomeName } from 'src/biomes';
 
+import { BST } from 'src/utils/bst';
 import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
-import { sindexOf } from 'src/utils/sfind';
 
 // Types
 export interface Tile {
@@ -16,15 +16,19 @@ export interface LayerOptions {
 // Class
 export class Layer {
   // Attributes
-  readonly tiles: Tile[];
+  readonly tiles: BST<Tile, Vector>;
 
   private _bbox = NULL_RECT;
-  private options: LayerOptions;
+  private readonly options: LayerOptions;
 
   // Constructor
   constructor(tiles: Tile[], options: LayerOptions = {}) {
-    this.tiles = tiles;
     this.options = options;
+    this.tiles = new BST(
+      t => t.pos,
+      (a, b) => a.compare(b, options.compareMode || 'xy'),
+      tiles
+    );
 
     this.setupLayer();
   }
@@ -52,14 +56,7 @@ export class Layer {
   }
 
   // Methods
-  private compareVector(a: Vector, b: Vector): number {
-    return a.compare(b, this.options.compareMode || 'xy');
-  }
-
   private setupLayer() {
-    // Sort tiles
-    this.tiles.sort((a, b) => this.compareVector(a.pos, b.pos));
-
     // Compute bbox
     const bbox = {
       t: Infinity,
@@ -79,7 +76,7 @@ export class Layer {
   }
 
   indexOfTile(pos: Vector): number {
-    return sindexOf(this.tiles, (tile) => this.compareVector(tile.pos, pos));
+    return this.tiles.indexOf(pos);
   }
 
   tile(pos: Vector): Tile | null {
@@ -88,8 +85,7 @@ export class Layer {
   }
 
   remove(pos: Vector) {
-    const i = this.indexOfTile(pos);
-    if (i > -1) this.tiles.splice(i, 1);
+    this.tiles.remove(pos);
   }
 
   copy(): Layer {

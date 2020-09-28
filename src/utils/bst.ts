@@ -1,22 +1,25 @@
 // Types
+export type ExtractKey<T, K> = (elem: T) => K;
 export type Comparator<T> = (a: T, b: T) => number;
 
 // Class
-export class BST<T> {
+export class BST<T, K = T> {
   // Attributes
   private readonly _array: T[];
-  private readonly comparator: Comparator<T>;
+  private readonly _map: ExtractKey<T, K>;
+  private readonly _comparator: Comparator<K>;
 
   // Constructor
-  constructor(comparator: Comparator<T>, elements: T[] = []) {
-    this.comparator = comparator;
+  constructor(map: (elem: T) => K, comparator: Comparator<K>, elements: T[] = []) {
+    this._map = map;
+    this._comparator = comparator;
 
     this._array = Array.from(elements)
-      .sort(comparator);
+      .sort((a, b) => comparator(map(a), map(b)));
   }
 
   // Methods
-  private search(elem: T): [number, T | null] {
+  private search(elem: K): [number, T | null] {
     let si = 0;
     let ei = this.length;
 
@@ -24,7 +27,7 @@ export class BST<T> {
       const mi = Math.floor((ei + si) / 2);
       const obj = this.item(mi);
 
-      const cmp = this.comparator(obj, elem);
+      const cmp = this._comparator(this._map(obj), elem);
       if (cmp === 0) {
         return [mi, obj];
       }
@@ -47,23 +50,28 @@ export class BST<T> {
     return this._array[i];
   }
 
-  indexOf(elem: T): number {
-    const [idx, obj] = this.search(elem);
+  indexOf(key: K): number {
+    const [idx, obj] = this.search(key);
     return obj === null ? -1 : idx;
   }
 
-  insert(elem: T) {
-    let [idx,] = this.search(elem);
-    const cmp = this.comparator(this._array[idx], elem);
+  find(key: K): T | null {
+    const [,obj] = this.search(key);
+    return obj;
+  }
 
-    if (cmp <= 0) {
+  insert(elem: T) {
+    const key = this._map(elem);
+
+    let [idx,] = this.search(key);
+    if (this._comparator(this._map(this._array[idx]), key) <= 0) {
       ++idx;
     }
 
     this._array.splice(idx, 0, elem);
   }
 
-  remove(elem: T) {
+  remove(elem: K) {
     const [idx, obj] = this.search(elem);
 
     if (obj !== null) {
