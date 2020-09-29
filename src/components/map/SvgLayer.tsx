@@ -5,8 +5,8 @@ import { renderAsPaths } from 'src/maps/svg';
 
 import { useLayer } from './layer.context';
 import { LayerMode } from './LayerContainer';
-import SvgFlatPath from './SvgFlatPath';
-import SvgIsometricPath from './SvgIsometricPath';
+import SvgFlatArea from './SvgFlatArea';
+import SvgIsometricArea from './SvgIsometricArea';
 import { Rect, Size } from '../../utils/math2d';
 import { BIOMES } from '../../biomes';
 
@@ -24,16 +24,16 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   const { tileSize } = useLayer();
 
   // Memo
-  const paths = useMemo(() => {
-    let paths = renderAsPaths(layer);
+  const areas = useMemo(() => {
+    let areas = Array.from(layer.areas);
 
     if (mode === 'isometric') {
-      paths = paths.sort(
+      areas = areas.sort(
         (a, b) => BIOMES[a.biome].thickness - BIOMES[b.biome].thickness
       );
     }
 
-    return paths;
+    return areas;
   }, [layer, mode]);
 
   const { bbox, size } = useMemo(() => {
@@ -54,7 +54,7 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   }, [layer, mode]);
 
   // Render
-  const SvgPath = mode === 'flat' ? SvgFlatPath : SvgIsometricPath;
+  const SvgArea = mode === 'flat' ? SvgFlatArea : SvgIsometricArea;
 
   return (
     <svg
@@ -62,8 +62,8 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       height={(size.h + 1) * tileSize}
       viewBox={`0 0 ${size.w + 1} ${size.h + 1}`}
     >
-      { paths.map((path, i) => (
-        <SvgPath key={i} bbox={bbox} path={path.path} biome={path.biome} />
+      { areas.map(area => (
+        <SvgArea key={area.id} bbox={bbox} area={area} />
       )) }
     </svg>
   );

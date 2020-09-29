@@ -1,16 +1,9 @@
 import { BiomeName, OptionalBiomeName } from 'src/biomes';
-
+import { DIRECTIONS } from 'src/constants';
 import { BST } from 'src/utils/bst';
 import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
-import { Area } from './area';
 
-// Constants
-const AREA_DIRECTIONS = [
-  { x:  0, y: -1 },
-  { x: -1, y:  0 },
-  { x:  0, y:  1 },
-  { x:  1, y:  0 },
-];
+import { Area } from './area';
 
 // Types
 export interface InputTile {
@@ -78,7 +71,7 @@ export class Layer {
 
       if (!tile.area) continue;
 
-      for (const dir of AREA_DIRECTIONS) {
+      for (const dir of DIRECTIONS.BASICS) {
         const p = tile.pos.add(dir);
         const t = tiles.find(p);
 

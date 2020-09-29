@@ -11,25 +11,18 @@ export class BST<T, K = T> {
 
   // Constructor
   private constructor(extractor: (elem: T) => K, comparator: Comparator<K>, elements: T[] = []) {
+    this._array = elements;
     this._extractor = extractor;
     this._comparator = comparator;
-
-    this._array = Array.from(elements)
-      .sort((a, b) => comparator(extractor(a), extractor(b)));
   }
 
   // Statics
   static fromArray<T, K>(elements: T[], extractor: ExtractKey<T, K>, comparator: Comparator<K>): BST<T, K> {
-    const bst = new BST<T, K>(extractor, comparator as Comparator<K>);
-
     // Add and sort elements
-    for (const e of elements) {
-      bst._array.push(e);
-    }
+    const array = Array.from(elements);
+    array.sort((a, b) => comparator(extractor(a), extractor(b)));
 
-    bst._array.sort((a, b) => comparator(extractor(a), extractor(b)));
-
-    return bst;
+    return new BST<T, K>(extractor, comparator as Comparator<K>, array);
   }
 
   static copy<T, K>(bst: BST<T, K>): BST<T, K> {
@@ -102,8 +95,19 @@ export class BST<T, K = T> {
   }
 
   // - iterate
-  *[Symbol.iterator] () {
+  *[Symbol.iterator]() {
     yield* this._array;
+  }
+
+  filter(predicate: (elem: T, index: number) => boolean): BST<T, K> {
+    const filtered: T[] = [];
+
+    for (let i = 0; i < this.length; ++i) {
+      const elem = this.item(i);
+      if (predicate(elem, i)) filtered.push(elem);
+    }
+
+    return new BST(this._extractor, this._comparator, filtered)
   }
 
   map<R>(fn: (elem: T) => R): R[] {

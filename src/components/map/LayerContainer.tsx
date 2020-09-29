@@ -75,6 +75,8 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
 
   // Callbacks
   const handleContainerRef = useCallback((container: HTMLDivElement) => {
+    if (!container) return;
+
     // Observe component size
     const obs = new ResizeObserver(entries => {
       const rect = entries[0].contentRect;

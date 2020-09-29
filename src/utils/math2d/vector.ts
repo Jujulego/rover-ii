@@ -59,6 +59,10 @@ export class Vector implements IVector {
     return new Vector(s.w, s.h);
   }
 
+  static add(u: IVector, v: IVector): Vector {
+    return (u instanceof Vector ? u : new Vector(u)).add(v);
+  }
+
   // Methods
   // - unary operations
   norm(): number {
