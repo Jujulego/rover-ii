@@ -36,7 +36,7 @@ const App = () => {
     <AppLayout>
       {/*<Navigator className={styles.navigator} layer={layer} />*/}
       <LayerContainer tileSize={16} center={new Vector(20, 20)}>
-        <SvgLayer layer={layer} mode="isometric" />
+        <SvgLayer layer={layer} mode="flat" />
       </LayerContainer>
     </AppLayout>
   );

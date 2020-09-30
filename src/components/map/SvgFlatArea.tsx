@@ -25,10 +25,7 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
   return (
     <path
       d={d}
-      fill={biome.color}
-      stroke="red"
-      strokeLinecap="square"
-      strokeWidth={.1}
+      fill={biome.color + '55'}
     />
   );
 };

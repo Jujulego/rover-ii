@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react';
 
 import { Layer as LayerData } from 'src/maps/layer';
-import { renderAsPaths } from 'src/maps/svg';
 
 import { useLayer } from './layer.context';
 import { LayerMode } from './LayerContainer';
