@@ -1,4 +1,5 @@
 import { Vector } from 'src/utils/math2d';
+import { BST } from '../utils/bst';
 
 // Types
 type Corner = 'tl' | 'bl' | 'br' | 'tr';
@@ -7,16 +8,30 @@ type Corners = Record<Corner, (pt: Vector) => string>;
 // Class
 export class Path {
   // Attributes
-  points: Vector[] = [];
+  private _points: Vector[] = [];
+  private _index = BST.empty<number, Vector>(idx => this.item(idx), (u, v) => u.compare(v));
 
   // Methods
+  *[Symbol.iterator]() {
+    yield* this._points;
+  }
+
+  item(idx: number): Vector {
+    return this._points[idx];
+  }
+
+  indexOf(pt: Vector): number {
+    return this._index.find(pt) ?? -1;
+  }
+
   cyclicItem(idx: number): Vector {
     while (idx < 0) idx += this.length;
-    return this.points[idx % this.length];
+    return this._points[idx % this.length];
   }
 
   push(u: Vector) {
-    this.points.push(u);
+    this._points.push(u);
+    this._index.insert(this._points.length - 1);
   }
 
   // - rendering
@@ -28,7 +43,7 @@ export class Path {
 
     // 1 tile path
     if (this.length === 1) {
-      const pt = this.points[0];
+      const pt = this._points[0];
       return `M ${corners.tl(pt)} L ${corners.bl(pt)} L ${corners.br(pt)} L ${corners.tr(pt)} Z`;
     }
 
@@ -39,7 +54,7 @@ export class Path {
       const cmd = path ? ' L' : 'M';
 
       // Get points
-      const pt = this.points[i];
+      const pt = this._points[i];
       const prev = this.cyclicItem(i - 1);
       const next = this.cyclicItem(i + 1);
 
@@ -91,7 +106,7 @@ export class Path {
   renderFlat(dx: number, dy: number): string {
     let path = '';
 
-    for (const pt of this.points) {
+    for (const pt of this._points) {
       const cmd = path ? ' L' : 'M';
       path += `${cmd} ${dx + pt.x + .5} ${dy + pt.y + .5}`;
     }
@@ -109,7 +124,7 @@ export class Path {
 
     let path = '';
 
-    for (const pt of this.points) {
+    for (const pt of this._points) {
       const cmd = path ? ' L' : 'M';
       path += `${cmd} ${dx + (pt.x - pt.y) * w} ${dy + (pt.x + pt.y + 1) * h - z}`;
     }
@@ -143,7 +158,11 @@ export class Path {
   }
 
   // Properties
+  get points() {
+    return Array.from(this._points);
+  }
+
   get length() {
-    return this.points.length;
+    return this._points.length;
   }
 }

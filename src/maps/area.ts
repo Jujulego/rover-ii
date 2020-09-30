@@ -16,10 +16,8 @@ export class Area {
   ) {}
 
   // Methods
-  *[Symbol.iterator]() {
-    for (const tile of this.layer.tiles) {
-      if (tile.area === this.id) yield tile;
-    }
+  tiles(): BST<Tile, Vector> {
+    return this.layer.tiles.filter(tile => tile.area === this.id);
   }
 
   borderTiles(): BST<Tile, Vector> {

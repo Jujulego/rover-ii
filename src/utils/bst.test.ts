@@ -47,6 +47,14 @@ describe('BST.insert', () => {
     expect(bst.array)
       .toEqual([1, 2, 4, 5, 6]);
   });
+
+  test('in an empty bst', () => {
+    const bst = BST.empty<number>(n => n, (a, b) => a - b);
+    bst.insert(6);
+
+    expect(bst.array)
+      .toEqual([6]);
+  });
 });
 
 describe('BST.remove', () => {

@@ -17,6 +17,10 @@ export class BST<T, K = T> {
   }
 
   // Statics
+  static empty<T, K = T>(extractor: ExtractKey<T, K>, comparator: Comparator<K>): BST<T, K> {
+    return new BST<T, K>(extractor, comparator);
+  }
+
   static fromArray<T, K>(elements: T[], extractor: ExtractKey<T, K>, comparator: Comparator<K>): BST<T, K> {
     // Add and sort elements
     const array = Array.from(elements);
@@ -74,14 +78,18 @@ export class BST<T, K = T> {
 
   // - modifying
   insert(elem: T): T {
-    const key = this._extractor(elem);
+    if (this.length === 0) {
+      this._array.push(elem);
+    } else {
+      const key = this._extractor(elem);
 
-    let [idx,] = this.search(key);
-    if (this._comparator(this._extractor(this._array[idx]), key) <= 0) {
-      ++idx;
+      let [idx,] = this.search(key);
+      if (this._comparator(this._extractor(this._array[idx]), key) <= 0) {
+        ++idx;
+      }
+
+      this._array.splice(idx, 0, elem);
     }
-
-    this._array.splice(idx, 0, elem);
 
     return elem;
   }
