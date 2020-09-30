@@ -88,6 +88,39 @@ export class Path {
     return path + 'Z';
   }
 
+  renderFlat(dx: number, dy: number): string {
+    let path = '';
+
+    for (const pt of this.points) {
+      const cmd = path ? ' L' : 'M';
+      path += `${cmd} ${dx + pt.x + .5} ${dy + pt.y + .5}`;
+    }
+
+    if (this.length === 1) {
+      path += ' Z';
+    }
+
+    return path;
+  }
+
+  renderIsometric(dx: number, dy: number, z: number): string {
+    const w = Math.tan(Math.PI / 3) * .5;
+    const h = .5;
+
+    let path = '';
+
+    for (const pt of this.points) {
+      const cmd = path ? ' L' : 'M';
+      path += `${cmd} ${dx + (pt.x - pt.y) * w} ${dy + (pt.x + pt.y + 1) * h - z}`;
+    }
+
+    if (this.length === 1) {
+      path += ' Z';
+    }
+
+    return path;
+  }
+
   renderFlatZone(dx: number, dy: number): string {
     return this.renderZone({
       tl: pt => `${dx + pt.x    } ${dy + pt.y    }`,
@@ -98,14 +131,14 @@ export class Path {
   }
 
   renderIsometricZone(dx: number, dy: number, z: number): string {
-    const w = Math.tan(Math.PI / 3);
-    const h = 1;
+    const w = Math.tan(Math.PI / 3) * .5;
+    const h = .5;
 
     return this.renderZone({
-      tl: pt => `${dx + (pt.x - pt.y    ) * w * .5} ${dy + (pt.x + pt.y    ) * h * .5 - z}`,
-      bl: pt => `${dx + (pt.x - pt.y - 1) * w * .5} ${dy + (pt.x + pt.y + 1) * h * .5 - z}`,
-      br: pt => `${dx + (pt.x - pt.y    ) * w * .5} ${dy + (pt.x + pt.y + 2) * h * .5 - z}`,
-      tr: pt => `${dx + (pt.x - pt.y + 1) * w * .5} ${dy + (pt.x + pt.y + 1) * h * .5 - z}`
+      tl: pt => `${dx + (pt.x - pt.y    ) * w} ${dy + (pt.x + pt.y    ) * h - z}`,
+      bl: pt => `${dx + (pt.x - pt.y - 1) * w} ${dy + (pt.x + pt.y + 1) * h - z}`,
+      br: pt => `${dx + (pt.x - pt.y    ) * w} ${dy + (pt.x + pt.y + 2) * h - z}`,
+      tr: pt => `${dx + (pt.x - pt.y + 1) * w} ${dy + (pt.x + pt.y + 1) * h - z}`
     });
   }
 
