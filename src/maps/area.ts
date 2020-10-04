@@ -1,9 +1,8 @@
 import { DIRECTIONS } from 'src/constants';
 import { BiomeName } from 'src/biomes';
-import { BST } from 'src/utils/bst';
 import { IVector, Vector } from 'src/utils/math2d';
 
-import { Layer, Tile } from './layer';
+import { Layer } from './layer';
 import { Path } from './path';
 import { TileSet } from './types';
 
@@ -33,11 +32,11 @@ export class Area {
 
   // Methods
   // - tiles
-  tiles(): BST<Tile, Vector> {
+  tiles(): TileSet {
     return this.layer.tiles.filter(tile => tile.area === this.id);
   }
 
-  borderTiles(): BST<Tile, Vector> {
+  borderTiles(): TileSet {
     return this.layer.tiles.filter(tile => {
       // Must be in the area
       if (tile.area !== this.id) return false;

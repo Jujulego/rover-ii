@@ -4,6 +4,7 @@ import { BST } from 'src/utils/bst';
 import { NULL_RECT, Rect, Vector, VectorOrderMode } from 'src/utils/math2d';
 
 import { Area } from './area';
+import { TileSet } from './types';
 
 // Types
 export interface InputTile {
@@ -34,13 +35,13 @@ interface AreaData extends InputArea {
 export class Layer {
   // Attributes
   readonly areas: Area[] = [];
-  readonly tiles: BST<Tile, Vector>;
+  readonly tiles: TileSet;
 
   private _bbox = NULL_RECT;
   private readonly options: LayerOptions;
 
   // Constructor
-  private constructor(tiles: BST<Tile, Vector>, areas: InputArea[], options: LayerOptions = {}) {
+  private constructor(tiles: TileSet, areas: InputArea[], options: LayerOptions = {}) {
     this.options = options;
     this.areas = areas.map(area => new Area(area.id, area.biome, this));
     this.tiles = tiles;
@@ -50,7 +51,7 @@ export class Layer {
   }
 
   // Static methods
-  private static computeAreas(tiles: BST<Tile, Vector>): InputArea[] {
+  private static computeAreas(tiles: TileSet): InputArea[] {
     const pile: Tile[] = [];
 
     // Areas
