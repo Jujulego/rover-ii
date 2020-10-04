@@ -20,18 +20,28 @@ export class Path {
     return this._points[idx];
   }
 
-  indexOf(pt: Vector): number {
-    return this._index.find(pt) ?? -1;
-  }
-
   cyclicItem(idx: number): Vector {
     while (idx < 0) idx += this.length;
     return this._points[idx % this.length];
   }
 
+  indexOf(pt: Vector): number {
+    return this._index.find(pt) ?? -1;
+  }
+
   push(u: Vector) {
     this._points.push(u);
     this._index.insert(this._points.length - 1);
+  }
+
+  reverse(): Path {
+    const reverse = new Path();
+
+    for (const pt of this._points.reverse()) {
+      reverse.push(pt);
+    }
+
+    return reverse;
   }
 
   // - rendering

@@ -8,17 +8,17 @@ import { TileSet } from './types';
 
 // Constants
 const EXT_DIRECTIONS = [
+  DIRECTIONS.BOTTOM,
+  DIRECTIONS.RIGHT,
   DIRECTIONS.TOP,
   DIRECTIONS.LEFT,
-  DIRECTIONS.BOTTOM,
-  DIRECTIONS.RIGHT
 ];
 
 const INT_DIRECTIONS = [
-  DIRECTIONS.LEFT,
   DIRECTIONS.TOP,
+  DIRECTIONS.LEFT,
+  DIRECTIONS.BOTTOM,
   DIRECTIONS.RIGHT,
-  DIRECTIONS.BOTTOM
 ];
 
 // Class
@@ -58,22 +58,19 @@ export class Area {
   }
 
   // - borders
-  private borderWalker(tiles: TileSet, directions: IVector[]): Path {
+  private borderWalker(start: Vector, tiles: TileSet, directions: IVector[]): Path {
+    const path = new Path();
+
     // Simple cases
-    if (tiles.length === 0) return new Path();
+    if (tiles.length === 0) return path;
     if (tiles.length === 1) {
-      const path = new Path();
       path.push(tiles.item(0).pos);
 
       return path;
     }
 
-    // Initiate
-    const path = new Path();
-    const start = tiles.item(0).pos;
-
     // Follow tiles
-    let previous = start.add(Vector.mul(directions[0], -1));
+    let previous = start.add(directions[0]);
     let pos = start;
 
     do {
@@ -103,25 +100,25 @@ export class Area {
     return path;
   }
 
-  externalBorder(): Path {
+  border(): Path {
     const tiles = this.borderTiles();
-    return this.borderWalker(tiles, EXT_DIRECTIONS);
+    return this.borderWalker(tiles.item(0).pos, tiles, EXT_DIRECTIONS);
   }
 
   borders(): Path[] {
-    let tiles = this.borderTiles();
+    const tiles = this.borderTiles();
     const borders: Path[] = [];
 
     // External border
-    borders.push(this.borderWalker(tiles, EXT_DIRECTIONS));
-    tiles = tiles.filter(t => borders[0].indexOf(t.pos) === -1);
+    borders.push(this.borderWalker(tiles.item(0).pos, tiles, EXT_DIRECTIONS));
+    let missing = tiles.filter(t => borders[0].indexOf(t.pos) === -1);
 
     // Internal borders
-    while (tiles.length > 0) {
-      const border = this.borderWalker(tiles, INT_DIRECTIONS);
+    while (missing.length > 0) {
+      const border = this.borderWalker(missing.item(0).pos, tiles, INT_DIRECTIONS);
       borders.push(border);
 
-      tiles = tiles.filter(t => border.indexOf(t.pos) === -1);
+      missing = missing.filter(t => border.indexOf(t.pos) === -1);
     }
 
     return borders;

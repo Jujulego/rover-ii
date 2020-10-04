@@ -19,7 +19,10 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
   const [zone, ...internals] = useMemo(() => {
-    return area.borders().map(b => b.renderFlatZone(-bbox.l, -bbox.t));
+    const borders = area.borders();
+    console.log(...borders.map(b => b.item(0)));
+
+    return borders.map(b => b.renderFlatZone(-bbox.l, -bbox.t));
   }, [area, bbox.l, bbox.t]);
 
   // Rendering
