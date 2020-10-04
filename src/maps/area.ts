@@ -1,10 +1,26 @@
 import { DIRECTIONS } from 'src/constants';
 import { BiomeName } from 'src/biomes';
 import { BST } from 'src/utils/bst';
-import { Vector } from 'src/utils/math2d';
+import { IVector, Vector } from 'src/utils/math2d';
 
 import { Layer, Tile } from './layer';
 import { Path } from './path';
+import { TileSet } from './types';
+
+// Constants
+const EXT_DIRECTIONS = [
+  DIRECTIONS.TOP,
+  DIRECTIONS.LEFT,
+  DIRECTIONS.BOTTOM,
+  DIRECTIONS.RIGHT
+];
+
+const INT_DIRECTIONS = [
+  DIRECTIONS.LEFT,
+  DIRECTIONS.TOP,
+  DIRECTIONS.RIGHT,
+  DIRECTIONS.BOTTOM
+];
 
 // Class
 export class Area {
@@ -16,6 +32,7 @@ export class Area {
   ) {}
 
   // Methods
+  // - tiles
   tiles(): BST<Tile, Vector> {
     return this.layer.tiles.filter(tile => tile.area === this.id);
   }
@@ -41,10 +58,8 @@ export class Area {
     });
   }
 
-  border(): Path {
-    // Get borders
-    const tiles = this.borderTiles();
-
+  // - borders
+  private borderWalker(tiles: TileSet, directions: IVector[]): Path {
     // Simple cases
     if (tiles.length === 0) return new Path();
     if (tiles.length === 1) {
@@ -59,7 +74,7 @@ export class Area {
     const start = tiles.item(0).pos;
 
     // Follow tiles
-    let previous = start.add(DIRECTIONS.BOTTOM);
+    let previous = start.add(Vector.mul(directions[0], -1));
     let pos = start;
 
     do {
@@ -68,11 +83,11 @@ export class Area {
 
       // Compute "back" direction (go from pos to previous) => it will be the last evaluated direction
       const back = previous.sub(pos);
-      const si = DIRECTIONS.BASICS.findIndex(d => back.equals(d));
+      const si = directions.findIndex(d => back.equals(d));
 
       // Search for a valid next tile
-      for (let i = 0; i < DIRECTIONS.BASICS.length; ++i) {
-        const dir = DIRECTIONS.BASICS[(si + 1 + i) % DIRECTIONS.BASICS.length];
+      for (let i = 0; i < directions.length; ++i) {
+        const dir = directions[(si + 1 + i) % directions.length];
         const next = pos.add(dir);
 
         // Check it exists
@@ -87,5 +102,29 @@ export class Area {
     } while (!pos.equals(start));
 
     return path;
+  }
+
+  externalBorder(): Path {
+    const tiles = this.borderTiles();
+    return this.borderWalker(tiles, EXT_DIRECTIONS);
+  }
+
+  borders(): Path[] {
+    let tiles = this.borderTiles();
+    const borders: Path[] = [];
+
+    // External border
+    borders.push(this.borderWalker(tiles, EXT_DIRECTIONS));
+    tiles = tiles.filter(t => borders[0].indexOf(t.pos) === -1);
+
+    // Internal borders
+    while (tiles.length > 0) {
+      const border = this.borderWalker(tiles, INT_DIRECTIONS);
+      borders.push(border);
+
+      tiles = tiles.filter(t => border.indexOf(t.pos) === -1);
+    }
+
+    return borders;
   }
 }

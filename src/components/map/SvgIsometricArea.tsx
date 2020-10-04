@@ -18,7 +18,7 @@ const SvgIsometricArea: FC<SvgIsometricAreaProps> = (props) => {
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
   const d = useMemo(
-    () => area.border().renderIsometricZone(-bbox.l, -bbox.t, biome.thickness / 64),
+    () => area.externalBorder().renderIsometricZone(-bbox.l, -bbox.t, biome.thickness / 64),
     [area, bbox.l, bbox.t, biome]
   );
 

@@ -59,8 +59,13 @@ export class Vector implements IVector {
     return new Vector(s.w, s.h);
   }
 
+  // - operations
   static add(u: IVector, v: IVector): Vector {
     return (u instanceof Vector ? u : new Vector(u)).add(v);
+  }
+
+  static mul(u: IVector, k: number): Vector {
+    return (u instanceof Vector ? u : new Vector(u)).mul(k);
   }
 
   // Methods

@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { red } from '@material-ui/core/colors';
+import { green, red } from '@material-ui/core/colors';
 
 import { BIOMES } from 'src/biomes';
 import { Area } from 'src/maps/area';
@@ -18,26 +18,15 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
   // Memo
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
-  const zone = useMemo(() => {
-    return area.border().renderFlatZone(-bbox.l, -bbox.t)
-  }, [area, bbox.l, bbox.t]);
-
-  const points = useMemo(() => {
-    const tiles = area.borderTiles();
-    const border = area.border();
-    let path = '';
-
-    for (const tile of tiles) {
-      //if (border.indexOf(tile.pos) !== -1) continue;
-      path = `${path} M ${tile.pos.x - bbox.l + .5} ${tile.pos.y - bbox.t + .5} Z`;
-    }
-
-    return path;
+  const [zone, ...internals] = useMemo(() => {
+    return area.borders().map(b => b.renderFlatZone(-bbox.l, -bbox.t));
   }, [area, bbox.l, bbox.t]);
 
   // Rendering
+  // if (area.id !== 1) return null;
+
   return (
-    <g>
+    <g id={`flat-area-${area.id}`}>
       <path
         d={zone}
         fill={biome.color + '55'}
@@ -46,7 +35,9 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
         strokeLinecap="square"
       />
       <g fill="transparent" strokeLinecap="square">
-        <path d={points} stroke={biome.color} strokeWidth={.2} />
+        { internals.map((int, i) => (
+          <path key={i} d={int} stroke={biome.color} strokeWidth={.3} />
+        )) }
       </g>
     </g>
   );
