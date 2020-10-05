@@ -35,8 +35,8 @@ const App = () => {
   return (
     <AppLayout>
       {/*<Navigator className={styles.navigator} layer={layer} />*/}
-      <LayerContainer tileSize={16} center={new Vector(20, 20)}>
-        <SvgLayer layer={layer} mode="flat" />
+      <LayerContainer tileSize={16} center={new Vector(19.5, 19.5)} mode="flat">
+        <SvgLayer layer={layer} />
       </LayerContainer>
     </AppLayout>
   );

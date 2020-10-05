@@ -98,7 +98,7 @@ export class Area {
 
       // End
       if (pos.equals(start)) {
-        // Compute last and check if next is not included
+        // Compute last and check if next exists and is not included in path
         const back = previous.sub(pos);
         const i = directions.findIndex(d => back.equals(d));
 
