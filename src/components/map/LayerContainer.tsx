@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { NULL_SIZE, NULL_VECTOR, Vector } from 'src/utils/math2d';
 
-import { LayerContext } from './layer.context';
+import { LayerContext, LayerMode } from './layer.context';
 
 // Styles
 const useStyles = makeStyles(({ palette, transitions }) => ({
@@ -26,9 +26,6 @@ const useStyles = makeStyles(({ palette, transitions }) => ({
     transition: transitions.create('transform', { duration: transitions.duration.complex })
   }
 }));
-
-// Types
-export type LayerMode = 'flat' | 'isometric';
 
 // Props
 export interface LayerContainerProps {
@@ -96,7 +93,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   return (
     <div ref={handleContainerRef} className={styles.container}>
       <div className={styles.map} style={{ transform: matrix }}>
-        <LayerContext.Provider value={{ center, containerSize, tileSize }}>
+        <LayerContext.Provider value={{ mode, center, containerSize, tileSize }}>
           { children }
         </LayerContext.Provider>
       </div>

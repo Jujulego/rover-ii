@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { green, red } from '@material-ui/core/colors';
+import { purple, red } from '@material-ui/core/colors';
 
 import { BIOMES } from 'src/biomes';
 import { Area } from 'src/maps/area';
@@ -19,10 +19,7 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
   const [zone, ...internals] = useMemo(() => {
-    const borders = area.borders();
-    console.log(...borders.map(b => b.item(0)));
-
-    return borders.map(b => b.renderFlatZone(-bbox.l, -bbox.t));
+    return area.borders().map(b => b.renderFlatZone(-bbox.l, -bbox.t));
   }, [area, bbox.l, bbox.t]);
 
   // Rendering
@@ -39,7 +36,7 @@ const SvgFlatArea: FC<SvgFlatAreaProps> = (props) => {
       />
       <g fill="transparent" strokeLinecap="square">
         { internals.map((int, i) => (
-          <path key={i} d={int} stroke={biome.color} strokeWidth={.3} />
+          <path key={i} d={int} stroke={purple[500]} strokeWidth={.3} />
         )) }
       </g>
     </g>

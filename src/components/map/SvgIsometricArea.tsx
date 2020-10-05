@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react';
+import { purple, red } from '@material-ui/core/colors';
 
 import { BIOMES } from 'src/biomes';
 import { Area } from 'src/maps/area';
@@ -17,19 +18,25 @@ const SvgIsometricArea: FC<SvgIsometricAreaProps> = (props) => {
   // Memo
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
-  const d = useMemo(
-    () => area.border().renderIsometricZone(-bbox.l, -bbox.t, biome.thickness / 64),
-    [area, bbox.l, bbox.t, biome]
-  );
+  const [zone, ...internals] = useMemo(() => {
+    return area.borders().map(b => b.renderIsometricZone(-bbox.l, -bbox.t, biome.thickness / 64));
+  }, [area, biome, bbox.l, bbox.t]);
 
   return (
-    <path
-      d={d}
-      fill={biome.color}
-      stroke="red"
-      strokeLinecap="square"
-      strokeWidth={.1}
-    />
+    <g id={`iso-area-${area.id}`}>
+      <path
+        d={zone}
+        fill={biome.color}
+        stroke={red[500]}
+        strokeWidth={.1}
+        strokeLinecap="square"
+      />
+      <g fill="transparent" strokeLinecap="square">
+        { internals.map((int, i) => (
+          <path key={i} d={int} stroke={purple[500]} strokeWidth={.3} />
+        )) }
+      </g>
+    </g>
   );
 };
 

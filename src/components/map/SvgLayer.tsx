@@ -3,7 +3,6 @@ import React, { FC, useMemo } from 'react';
 import { Layer as LayerData } from 'src/maps/layer';
 
 import { useLayer } from './layer.context';
-import { LayerMode } from './LayerContainer';
 import SvgFlatArea from './SvgFlatArea';
 import SvgIsometricArea from './SvgIsometricArea';
 import { Rect, Size } from '../../utils/math2d';
@@ -12,15 +11,14 @@ import { BIOMES } from '../../biomes';
 // Types
 export interface SvgLayerProps {
   layer: LayerData;
-  mode: LayerMode;
 }
 
 // Component
 const SvgLayer: FC<SvgLayerProps> = (props) => {
-  const { layer, mode } = props;
+  const { layer } = props;
 
   // Context
-  const { tileSize } = useLayer();
+  const { tileSize, mode } = useLayer();
 
   // Memo
   const areas = useMemo(() => {
@@ -52,6 +50,14 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
     }
   }, [layer, mode]);
 
+  const transform = useMemo(() => {
+    if (mode === 'flat') {
+      return `matrix(1, 0, 0, 1, -${.5 * tileSize}, -${.5 * tileSize})`;
+    } else {
+      return `matrix(1, 0, 0, 1, -${size.w / 2 * tileSize}, -${1.5 * tileSize})`;
+    }
+  }, [mode, size, tileSize]);
+
   // Render
   const SvgArea = mode === 'flat' ? SvgFlatArea : SvgIsometricArea;
 
@@ -60,6 +66,7 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       width={(size.w + 1) * tileSize}
       height={(size.h + 1) * tileSize}
       viewBox={`0 0 ${size.w + 1} ${size.h + 1}`}
+      style={{ transform }}
     >
       { areas.map(area => (
         <SvgArea key={area.id} bbox={bbox} area={area} />

@@ -3,8 +3,9 @@ import React, { FC, useMemo } from 'react';
 import { Layer as LayerData } from 'src/maps/layer';
 import { Vector } from 'src/utils/math2d';
 
+import { LayerMode } from './layer.context';
 import Layer from './Layer';
-import LayerContainer, { LayerMode } from './LayerContainer';
+import LayerContainer from './LayerContainer';
 import FlatTile from './FlatTile';
 import IsometricTile from './IsometricTile';
 
@@ -13,7 +14,7 @@ export interface MapProps {
   layer: LayerData;
   center?: Vector;
   zoom?: number;
-  mode?: LayerMode
+  mode?: LayerMode;
 
   onTileClick?: (position: Vector) => void;
 }
