@@ -73,7 +73,7 @@ export class Area {
     let previous = start.add(directions[0]);
     let pos = start;
 
-    do {
+    while (true) {
       // Add to path
       path.push(pos);
 
@@ -95,7 +95,20 @@ export class Area {
 
         break;
       }
-    } while (!pos.equals(start));
+
+      // End
+      if (pos.equals(start)) {
+        // Compute last and check if next is not included
+        const back = previous.sub(pos);
+        const i = directions.findIndex(d => back.equals(d));
+
+        const dir = directions[(i + 1) % directions.length];
+        const next = pos.add(dir);
+
+        if (!tiles.find(next)) break;
+        if (path.indexOf(next) !== -1) break;
+      }
+    }
 
     return path;
   }
