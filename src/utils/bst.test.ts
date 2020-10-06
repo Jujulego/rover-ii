@@ -26,6 +26,22 @@ describe('BST.indexOf', () => {
   });
 });
 
+describe('BST.find', () => {
+  test('on all existing elements', () => {
+    for (const n of numbers) {
+      expect(bst.find(n)).toBe(n);
+    }
+  });
+
+  test('on unknown elements', () => {
+    expect(bst.find(3))
+      .toBeNull();
+
+    expect(bst.find(10))
+      .toBeNull();
+  });
+});
+
 describe('BST.insert', () => {
   test('a new element in the middle', () => {
     bst.insert(3);

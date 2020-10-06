@@ -1,6 +1,7 @@
+import { Comparator } from './types';
+
 // Types
 export type ExtractKey<T, K> = (elem: T) => K;
-export type Comparator<T> = (a: T, b: T) => number;
 
 // Class
 export class BST<T, K = T> {
