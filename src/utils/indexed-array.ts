@@ -30,6 +30,20 @@ export class IndexedArray<T> {
     return ++this._generator;
   }
 
+  private store(elements: T[]): number[] {
+    const ids: number[] = [];
+
+    for (const el of elements) {
+      const id = this.generateId();
+      ids.push(id);
+
+      this._values.set(id, el);
+      this._value_index.insert(id);
+    }
+
+    return ids;
+  }
+
   // - item access
   item(idx: number): T | undefined {
     return this._values.get(this._order[idx]);
@@ -53,23 +67,19 @@ export class IndexedArray<T> {
 
   // - modify
   push(...elements: T[]) {
-    for (const el of elements) {
-      const id = this.generateId();
+    // Store values
+    const ids = this.store(elements);
 
-      // Push
-      this._values.set(id, el);
-      this._order.push(id);
-      this._value_index.insert(id);
-    }
+    // Push
+    this._order.push(...ids);
   }
 
-  insert(idx: number, element: T) {
-    const id = this.generateId();
+  insert(idx: number, ...elements: T[]) {
+    // Store values
+    const ids = this.store(elements);
 
     // Insert
-    this._values.set(id, element);
-    this._order.splice(idx, 0, id);
-    this._value_index.insert(id);
+    this._order.splice(idx, 0, ...ids);
   }
 
   remove(idx: number) {

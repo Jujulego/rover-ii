@@ -1,5 +1,5 @@
+import { IndexedArray } from 'src/utils/indexed-array';
 import { Vector } from 'src/utils/math2d';
-import { BST } from '../utils/bst';
 
 // Types
 type Corner = 'tl' | 'bl' | 'br' | 'tr';
@@ -8,40 +8,28 @@ type Corners = Record<Corner, (pt: Vector) => string>;
 // Class
 export class Path {
   // Attributes
-  private _points: Vector[] = [];
-  private _index = BST.empty<number, Vector>(idx => this.item(idx), (u, v) => u.compare(v));
+  private _points = new IndexedArray<Vector>((u, v) => u.compare(v));
 
   // Methods
   *[Symbol.iterator]() {
     yield* this._points;
   }
 
-  item(idx: number): Vector {
-    return this._points[idx];
+  item(idx: number): Vector | undefined {
+    return this._points.item(idx);
   }
 
   cyclicItem(idx: number): Vector {
     while (idx < 0) idx += this.length;
-    return this._points[idx % this.length];
+    return this._points.item(idx % this.length)!;
   }
 
-  indexOf(pt: Vector): number {
-    return this._index.find(pt) ?? -1;
+  contains(pt: Vector): boolean {
+    return this._points.contains(pt);
   }
 
   push(u: Vector) {
     this._points.push(u);
-    this._index.insert(this._points.length - 1);
-  }
-
-  reverse(): Path {
-    const reverse = new Path();
-
-    for (const pt of this._points.reverse()) {
-      reverse.push(pt);
-    }
-
-    return reverse;
   }
 
   // - rendering
@@ -53,7 +41,7 @@ export class Path {
 
     // 1 tile path
     if (this.length === 1) {
-      const pt = this._points[0];
+      const pt = this._points.item(0)!;
       return `M ${corners.tl(pt)} L ${corners.bl(pt)} L ${corners.br(pt)} L ${corners.tr(pt)} Z`;
     }
 
@@ -64,7 +52,7 @@ export class Path {
       const cmd = path ? ' L' : 'M';
 
       // Get points
-      const pt = this._points[i];
+      const pt = this._points.item(i)!;
       const prev = this.cyclicItem(i - 1);
       const next = this.cyclicItem(i + 1);
 
