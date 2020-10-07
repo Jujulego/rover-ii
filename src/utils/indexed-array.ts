@@ -58,6 +58,20 @@ export class IndexedArray<T> {
     return id === null ? -1 : this._order.indexOf(id);
   }
 
+  nearestValues(element: T): T[] {
+    const values: T[] = [];
+
+    const si = this._value_index.shouldBeAt(element);
+    for (const i of [si - 1, si, si + 1]) {
+      if (i >= 0 && i < this.length) {
+        const id = this._value_index.item(i);
+        values.push(this._values.get(id)!);
+      }
+    }
+
+    return values;
+  }
+
   // - iterate
   *[Symbol.iterator] () {
     for (const id of this._order) {

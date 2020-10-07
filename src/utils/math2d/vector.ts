@@ -13,6 +13,7 @@ export type VectorArgs<R extends any[] = [], O extends any[] = []>
   = ArgsArray<[IVector, ...R], O> | ArgsArray<[number, number, ...R], O>;
 
 export type VectorOrderMode = 'xy' | 'yx';
+export type VectorDistanceMode = 'euclidean' | 'manhattan';
 
 // Utils
 export function isVector(obj: any): obj is IVector {
@@ -103,6 +104,22 @@ export class Vector implements IVector {
       return d.x === 0 ? -d.y : -d.x;
     } else {
       return d.y === 0 ? -d.x : -d.y;
+    }
+  }
+
+  distance(v: IVector): number;
+  distance(v: IVector, mode: VectorDistanceMode): number;
+  distance(x: number, y: number): number;
+  distance(x: number, y: number, mode: VectorDistanceMode): number;
+  distance(...args: VectorArgs<[], [VectorDistanceMode]>): number {
+    const [v, order = 'euclidean'] = parseVectorArgs(args);
+
+    switch (order) {
+      case 'euclidean':
+        return this.sub(v).norm();
+
+      case 'manhattan':
+        return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
     }
   }
 

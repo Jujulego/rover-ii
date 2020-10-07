@@ -72,6 +72,18 @@ export class BST<T, K = T> {
     return obj === null ? -1 : idx;
   }
 
+  shouldBeAt(key: K): number {
+    if (this.length === 0) return 0;
+
+    // Search ordered index
+    const [idx,] = this.search(key);
+    if (this._comparator(this._extractor(this._array[idx]), key) <= 0) {
+      return idx + 1;
+    }
+
+    return idx;
+  }
+
   find(key: K): T | null {
     const [,obj] = this.search(key);
     return obj;
@@ -83,11 +95,7 @@ export class BST<T, K = T> {
       this._array.push(elem);
     } else {
       const key = this._extractor(elem);
-
-      let [idx,] = this.search(key);
-      if (this._comparator(this._extractor(this._array[idx]), key) <= 0) {
-        ++idx;
-      }
+      const idx = this.shouldBeAt(key);
 
       this._array.splice(idx, 0, elem);
     }

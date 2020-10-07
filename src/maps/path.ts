@@ -24,12 +24,37 @@ export class Path {
     return this._points.item(idx % this.length)!;
   }
 
+  indexOf(pt: Vector): number {
+    return this._points.indexOf(pt);
+  }
+
   contains(pt: Vector): boolean {
     return this._points.contains(pt);
   }
 
+  verticalNearest(pt: Vector): Vector {
+    const points = this._points.nearestValues(pt);
+    let near = points[0];
+    let dist = near.distance(pt, 'manhattan');
+
+    for (const p of points) {
+      const d = p.distance(pt, 'manhattan');
+
+      if (d < dist) {
+        near = p;
+        dist = d;
+      }
+    }
+
+    return near;
+  }
+
   push(u: Vector) {
     this._points.push(u);
+  }
+
+  insert(idx: number, ...points: Vector[]) {
+    this._points.insert(idx, ...points);
   }
 
   // - rendering
