@@ -1,5 +1,6 @@
+import { ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
 import { IndexedArray } from 'src/utils/indexed-array';
-import { Vector } from 'src/utils/math2d';
+import { Rect, Vector } from 'src/utils/math2d';
 
 // Types
 type Corner = 'tl' | 'bl' | 'br' | 'tr';
@@ -8,13 +9,11 @@ type Corners = Record<Corner, (pt: Vector) => string>;
 // Class
 export class Path {
   // Attributes
+  private _bbox = new Rect(0, 0, 0, 0);
   private _points = new IndexedArray<Vector>((u, v) => u.compare(v));
 
   // Methods
-  *[Symbol.iterator]() {
-    yield* this._points;
-  }
-
+  // - access
   item(idx: number): Vector | undefined {
     return this._points.item(idx);
   }
@@ -24,6 +23,12 @@ export class Path {
     return this._points.item(idx % this.length)!;
   }
 
+  // - iterate
+  *[Symbol.iterator] () {
+    yield* this._points;
+  }
+
+  // - search
   indexOf(pt: Vector): number {
     return this._points.indexOf(pt);
   }
@@ -49,12 +54,29 @@ export class Path {
     return near;
   }
 
+  // - modify
+  private addToBbox(u: Vector) {
+    if (this.length === 1) {
+      this._bbox.t = u.y;
+      this._bbox.l = u.x;
+      this._bbox.b = u.y;
+      this._bbox.r = u.x;
+    } else if (!u.within(this._bbox)) {
+      this._bbox.t = Math.min(this._bbox.t, u.y);
+      this._bbox.l = Math.min(this._bbox.l, u.x);
+      this._bbox.b = Math.max(this._bbox.b, u.y);
+      this._bbox.r = Math.max(this._bbox.r, u.x);
+    }
+  }
+
   push(u: Vector) {
     this._points.push(u);
+    this.addToBbox(u);
   }
 
   insert(idx: number, ...points: Vector[]) {
     this._points.insert(idx, ...points);
+    for (const u of points) this.addToBbox(u);
   }
 
   // - rendering
@@ -142,7 +164,7 @@ export class Path {
   }
 
   renderIsometric(dx: number, dy: number, z: number): string {
-    const w = Math.tan(Math.PI / 3) * .5;
+    const w = ISOMETRIC_WIDTH_FACTOR * .5;
     const h = .5;
 
     let path = '';
@@ -169,7 +191,7 @@ export class Path {
   }
 
   renderIsometricZone(dx: number, dy: number, z: number): string {
-    const w = Math.tan(Math.PI / 3) * .5;
+    const w = ISOMETRIC_WIDTH_FACTOR * .5;
     const h = .5;
 
     return this.renderZone({
@@ -183,6 +205,10 @@ export class Path {
   // Properties
   get points() {
     return Array.from(this._points);
+  }
+
+  get bbox() {
+    return this._bbox;
   }
 
   get length() {

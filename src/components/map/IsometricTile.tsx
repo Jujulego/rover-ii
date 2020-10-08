@@ -3,7 +3,9 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES, BiomeName } from 'src/biomes';
+import { ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
 import { Vector } from 'src/utils/math2d';
+
 import { useLayer } from './layer.context';
 
 // Styles
@@ -37,7 +39,7 @@ const IsometricTile: FC<IsometricTileProps> = (props) => {
 
   // Memo
   const { height, width, thickness } = useMemo(() => {
-    const width = size * Math.tan(Math.PI / 3);
+    const width = size * ISOMETRIC_WIDTH_FACTOR;
     const height = width * 64 / 132;
     const thickness = width * BIOMES[biome].thickness / 132;
 

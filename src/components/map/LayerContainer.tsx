@@ -3,7 +3,8 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { NULL_SIZE, NULL_VECTOR, Vector } from 'src/utils/math2d';
+import { ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
+import { NULL_RECT, NULL_VECTOR, Rect, Vector } from 'src/utils/math2d';
 
 import { LayerContext, LayerMode } from './layer.context';
 
@@ -44,7 +45,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   } = props;
 
   // State
-  const [containerSize, setContainerSize] = useState(NULL_SIZE);
+  const [container, setContainer] = useState(NULL_RECT);
 
   // Ref
   const observerRef = useRef<ResizeObserver>();
@@ -55,10 +56,10 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
     const y = center.y;
 
     if (mode === 'isometric') {
-      const width = tileSize * Math.tan(Math.PI / 3);
-      const height = width * 64 / 132;
+      const wi = ISOMETRIC_WIDTH_FACTOR;
+      const z = 0;
 
-      return `matrix(${zoom}, 0, 0, ${zoom}, ${-(x - y + 1) * width * .5}, ${-(x + y + 1) * (height * .5 + 1)})`;
+      return `matrix(${zoom}, 0, 0, ${zoom}, ${-(x - y) * wi * tileSize * .5}, ${-(x + y + z) * tileSize * .5})`;
     }
 
     return `matrix(${zoom}, 0, 0, ${zoom}, ${(-x - .5) * tileSize}, ${(-y - .5) * tileSize})`;
@@ -76,8 +77,14 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
 
     // Observe component size
     const obs = new ResizeObserver(entries => {
-      const rect = entries[0].contentRect;
-      setContainerSize({ w: rect.width, h: rect.height });
+      const target = entries[0].target as HTMLDivElement;
+
+      setContainer(new Rect(
+        target.offsetTop,
+        target.offsetLeft,
+        target.offsetTop + target.offsetHeight,
+        target.offsetLeft + target.offsetWidth,
+      ));
     });
 
     obs.observe(container);
@@ -85,7 +92,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
     // Replace old observer
     if (observerRef.current) observerRef.current.disconnect();
     observerRef.current = obs;
-  }, [setContainerSize]);
+  }, [setContainer]);
 
   // Render
   const styles = useStyles();
@@ -93,7 +100,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   return (
     <div ref={handleContainerRef} className={styles.container}>
       <div className={styles.map} style={{ transform: matrix }}>
-        <LayerContext.Provider value={{ mode, center, containerSize, tileSize }}>
+        <LayerContext.Provider value={{ mode, center, container, tileSize }}>
           { children }
         </LayerContext.Provider>
       </div>

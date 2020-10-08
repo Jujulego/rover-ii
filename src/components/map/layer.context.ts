@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import { NULL_SIZE, NULL_VECTOR, ISize, Vector } from 'src/utils/math2d';
+import { NULL_VECTOR, Vector, NULL_RECT, Rect } from 'src/utils/math2d';
 
 // Types
 export type LayerMode = 'flat' | 'isometric';
@@ -8,7 +8,7 @@ export type LayerMode = 'flat' | 'isometric';
 export interface LayerContextProps {
   mode: LayerMode;
   center: Vector;
-  containerSize: ISize;
+  container: Rect;
   tileSize: number;
 }
 
@@ -16,7 +16,7 @@ export interface LayerContextProps {
 const layerDefaults: LayerContextProps = {
   mode: 'flat',
   center: NULL_VECTOR,
-  containerSize: NULL_SIZE,
+  container: NULL_RECT,
   tileSize: 0
 };
 

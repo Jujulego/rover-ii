@@ -16,11 +16,11 @@ const Layer = (props: LayerProps): ReactElement => {
   const { layer, children } = props;
 
   // Context
-  const { center, containerSize, tileSize } = useLayer();
+  const { center, container, tileSize } = useLayer();
 
   // Memos
   const bbox = useMemo(() => {
-    let size = Vector.fromSize(containerSize);
+    let size = Vector.fromSize(container.size);
     size = size.div(tileSize);
     size = size.add(1, 1);
 
@@ -28,7 +28,7 @@ const Layer = (props: LayerProps): ReactElement => {
     const br = center.add(size);
 
     return Rect.fromVectors(tl, br);
-  }, [center, containerSize, tileSize]);
+  }, [center, container, tileSize]);
 
   const sublayer = useMemo(() => layer.sublayer(bbox), [layer, bbox]);
 

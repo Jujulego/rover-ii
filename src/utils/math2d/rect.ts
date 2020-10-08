@@ -1,7 +1,7 @@
 import { ArgsArray } from '../types';
 
 import { ISize, parseSizeArgs, Size, SizeArgs } from './size';
-import { VectorArgs, parseVectorArgs, IVector } from './vector';
+import { VectorArgs, parseVectorArgs, IVector, Vector } from './vector';
 
 // Types
 export interface IRect {
@@ -96,8 +96,32 @@ export class Rect implements IRect {
   }
 
   // Properties
+  get tl(): Vector {
+    return new Vector(this.l, this.t);
+  }
+
+  get bl(): Vector {
+    return new Vector(this.l, this.b);
+  }
+
+  get br(): Vector {
+    return new Vector(this.r, this.b);
+  }
+
+  get tr(): Vector {
+    return new Vector(this.r, this.t);
+  }
+
+  get w(): number {
+    return this.r - this.l;
+  }
+
+  get h(): number {
+    return this.b - this.t;
+  }
+
   get size(): Size {
-    return new Size(this.r - this.l, this.b - this.t);
+    return new Size(this.w, this.h);
   }
 }
 
