@@ -24,18 +24,13 @@ const SvgIsometricArea: FC<SvgIsometricAreaProps> = (props) => {
 
   return (
     <g id={`iso-area-${area.id}`}>
-      <path
-        d={zone}
-        fill={biome.color}
-        stroke={red[500]}
-        strokeWidth={.1}
-        strokeLinecap="square"
-      />
-      <g fill="transparent" strokeLinecap="square">
+      <mask id={`iso-mask-${area.id}`}>
+        <path d={zone} fill="white" />
         { internals.map((int, i) => (
-          <path key={i} d={int} stroke={purple[500]} strokeWidth={.3} />
+          <path key={`i${i}`} d={int} fill="black" />
         )) }
-      </g>
+      </mask>
+      <rect x={0} y={0} width={bbox.r - bbox.l + 1} height={bbox.b - bbox.t + 1} mask={`url(#iso-mask-${area.id})`} fill={biome.color} />
     </g>
   );
 };
