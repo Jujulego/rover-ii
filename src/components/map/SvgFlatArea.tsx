@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { BIOMES } from 'src/biomes';
 import { Area } from 'src/maps/area';
 import { Rect } from 'src/utils/math2d';
+import { DIRECTIONS } from '../../constants';
 
 // Types
 export interface SvgFlatAreaProps {

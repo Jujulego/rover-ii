@@ -1,6 +1,6 @@
 import { DIRECTIONS } from 'src/constants';
-import { BiomeName } from 'src/biomes';
-import { IVector, Vector } from 'src/utils/math2d';
+import { BiomeName, BIOMES } from 'src/biomes';
+import { IVector, Rect, Vector } from 'src/utils/math2d';
 
 import { Layer } from './layer';
 import { Path } from './path';
@@ -113,11 +113,6 @@ export class Area {
     return path;
   }
 
-  border(): Path {
-    const tiles = this.borderTiles();
-    return this.borderWalker(tiles.item(0).pos, tiles, EXT_DIRECTIONS);
-  }
-
   borders(): Path[] {
     const tiles = this.borderTiles();
     const borders: Path[] = [];
@@ -135,5 +130,60 @@ export class Area {
     }
 
     return borders;
+  }
+
+  // - sides
+  isometricSide(dir: IVector): Rect[] {
+    const biome = BIOMES[this.biome];
+
+    // Simple cases
+    if (biome.thickness === 0) return [];
+
+    // Extract tiles
+    const tiles = this.layer.tiles.filter(tile => {
+      // Must be in the area
+      if (tile.area !== this.id) return false;
+
+      const p = tile.pos.add(dir);
+      const t = this.layer.tile(p);
+
+      return !t || (t.area !== this.id && biome.thickness > BIOMES[t.biome].thickness);
+    });
+
+    // Build rects
+    const walk = dir.x === 0 ? DIRECTIONS.LEFT : DIRECTIONS.TOP;
+    const rects: Rect[] = [];
+
+    while (tiles.length > 0) {
+      let { pos } = tiles.item(0);
+
+      // Remove tile & create rect
+      tiles.remove(pos);
+      const rect = Rect.fromVectorSize(pos, 0, 0);
+
+      // Walk !
+      while (true) {
+        pos = pos.add(walk);
+        const t = tiles.find(pos);
+
+        if (t) {
+          // Remove tile & add to rect
+          tiles.remove(pos);
+
+          if (dir.x === 0) {
+            rect.l = Math.min(rect.l, pos.x);
+          } else if (dir.y === 0) {
+            rect.t = Math.min(rect.t, pos.y);
+          }
+        } else {
+          break;
+        }
+      }
+
+      // Add rect
+      rects.push(rect);
+    }
+
+    return rects;
   }
 }

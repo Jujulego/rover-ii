@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react';
 
 import { BIOMES } from 'src/biomes';
+import { ISOMETRIC_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
 import { Area } from 'src/maps/area';
 import { Rect } from 'src/utils/math2d';
-import { ISOMETRIC_MAX_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from '../../constants';
 
 // Types
 export interface SvgIsometricAreaProps {
@@ -23,10 +23,10 @@ const SvgIsometricArea: FC<SvgIsometricAreaProps> = (props) => {
     const abox = zone.bbox;
     const w = ISOMETRIC_WIDTH_FACTOR * .5;
     const h = .5;
-    const z = biome.thickness / ISOMETRIC_MAX_THICKNESS;
+    const z = biome.thickness * ISOMETRIC_THICKNESS;
 
     return {
-      paths: [zone, ...internals].map(b => b.renderIsometricZone(-bbox.l, -bbox.t, z)),
+      paths: [zone, ...internals].map(b => b.renderIsometricZone(0, 0, z)),
       abox: new Rect(
         (abox.t + abox.l) * h - z,
         (abox.l - abox.b - 1) * w,
@@ -34,19 +34,21 @@ const SvgIsometricArea: FC<SvgIsometricAreaProps> = (props) => {
         (abox.r - abox.t + 1) * w
       )
     };
-  }, [area, biome, bbox]);
+  }, [area, biome]);
 
+  // Rendering
   return (
-    <g id={`iso-area-${area.id}`}>
+    <g id={`iso-area-${area.id}`} transform={`matrix(1, 0, 0, 1, ${-bbox.l}, ${-bbox.t})`}>
       <mask id={`iso-mask-${area.id}`}>
         <path d={zone} fill="white" />
         { internals.map((int, i) => (
           <path key={i} d={int} fill="black" />
         )) }
       </mask>
-      <rect z={biome.thickness / ISOMETRIC_MAX_THICKNESS}
-        x={abox.l - bbox.l} width={abox.w}
-        y={abox.t - bbox.t} height={abox.h}
+
+      <rect
+        x={abox.l} width={abox.w}
+        y={abox.t} height={abox.h}
         mask={`url(#iso-mask-${area.id})`}
         fill={biome.color}
       />

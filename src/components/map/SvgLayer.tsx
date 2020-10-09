@@ -2,13 +2,15 @@ import React, { FC, MouseEvent, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES } from 'src/biomes';
-import { ISOMETRIC_MAX_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
+import { ISOMETRIC_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
 import { Layer as LayerData } from 'src/maps/layer';
 import { Rect, Size, Vector } from 'src/utils/math2d';
 
 import { useLayer } from './layer.context';
 import SvgFlatArea from './SvgFlatArea';
 import SvgIsometricArea from './SvgIsometricArea';
+import SvgIsometricSide from './SvgIsometricSide';
+import { Area } from '../../maps/area';
 
 // Types
 export interface SvgLayerProps {
@@ -50,18 +52,6 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       .sub(rc);
   }, [center, container, mode, tileSize]);
 
-  const areas = useMemo(() => {
-    let areas = Array.from(layer.areas);
-
-    if (mode === 'isometric') {
-      areas = areas.sort(
-        (a, b) => BIOMES[a.biome].thickness - BIOMES[b.biome].thickness
-      );
-    }
-
-    return areas;
-  }, [layer, mode]);
-
   const { bbox, size } = useMemo(() => {
     const bbox = layer.bbox;
     const size = bbox.size;
@@ -84,11 +74,32 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       return `matrix(1, 0, 0, 1, -${.5 * tileSize}, -${.5 * tileSize})`;
     } else {
       const tile = layer.tile(center);
-      const z = tile ? BIOMES[tile.biome].thickness / ISOMETRIC_MAX_THICKNESS : 0;
+      const z = tile ? BIOMES[tile.biome].thickness * ISOMETRIC_THICKNESS : 0;
 
       return `matrix(1, 0, 0, 1, -${(size.w + 1) / 2 * tileSize}, -${(1.5 - z) * tileSize})`;
     }
   }, [center, layer, mode, size, tileSize]);
+
+  const [areas, floor] = useMemo(() => {
+    if (mode === 'isometric') {
+      const areas: Area[] = [];
+      const floor: Area[] = [];
+
+      for (const area of layer.areas) {
+        const biome = BIOMES[area.biome];
+
+        if (biome.thickness === 0) {
+          floor.push(area);
+        } else {
+          areas.push(area);
+        }
+      }
+
+      return [areas, floor];
+    }
+
+    return [layer.areas, []];
+  }, [layer, mode]);
 
   // Callbacks
   const handleClick = useCallback((event: MouseEvent) => {
@@ -124,6 +135,12 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
       style={{ transform }}
       onClick={handleClick}
     >
+      { floor.map(area => (
+        <SvgArea key={area.id} bbox={bbox} area={area} />
+      )) }
+      { mode === 'isometric' && areas.map(area => (
+        <SvgIsometricSide key={area.id} bbox={bbox} area={area} />
+      )) }
       { areas.map(area => (
         <SvgArea key={area.id} bbox={bbox} area={area} />
       )) }

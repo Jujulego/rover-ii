@@ -127,7 +127,7 @@ export class BST<T, K = T> {
     return new BST(this._extractor, this._comparator, filtered)
   }
 
-  map<R>(fn: (elem: T) => R): R[] {
+  map<R>(fn: (elem: T, index: number) => R): R[] {
     return this._array.map(fn);
   }
 
