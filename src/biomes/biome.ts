@@ -1,20 +1,36 @@
 import { Image } from 'src/utils/image';
 
+// Types
+export interface BiomeColors {
+  main: string;
+  shadow1: string;
+  shadow2: string;
+}
+
+export interface BiomeOptions {
+  colors: BiomeColors;
+  thickness: number;
+  texture: string;
+}
+
 // Class
 export class Biome {
   // Attributes
-  color: string;
-  thickness: number;
+  readonly colors: BiomeColors;
+  readonly thickness: number;
 
-  flat: Image;
-  isometric: Image;
+  readonly flat: Image;
 
   // Constructor
-  constructor(color: string, thickness: number, floor: string, isometric: string) {
-    this.color = color;
-    this.thickness = thickness;
+  constructor(opts: BiomeOptions) {
+    this.colors = opts.colors;
+    this.thickness = opts.thickness;
 
-    this.flat = Image.fromDataUrl(floor);
-    this.isometric = Image.fromDataUrl(isometric);
+    this.flat = Image.fromDataUrl(opts.texture);
+  }
+
+  // Properties
+  get color() {
+    return this.colors.main;
   }
 }

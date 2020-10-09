@@ -18,39 +18,39 @@ const SvgIsometricSide: FC<SvgIsometricSideProps> = (props) => {
   // Memo
   const biome = useMemo(() => BIOMES[area.biome], [area]);
 
+  const rights = useMemo(() => {
+    const w = ISOMETRIC_WIDTH_FACTOR * .5;
+    const z = biome.thickness * ISOMETRIC_THICKNESS;
+
+    return area.isometricSide(DIRECTIONS.RIGHT)
+      .reduce((p, r) => p +
+        `M ${(r.l - r.t + 1) * w - bbox.l} ${(r.l + r.t + 1) * .5 - bbox.t - z} ` +
+        `v ${z} ` +
+        `L ${(r.r - r.b) * w - bbox.l} ${(r.r + r.b + 2) * .5 - bbox.t}` +
+        `v ${-z} ` +
+        `Z`, ''
+      );
+  }, [area, biome, bbox]);
+
+  const bottoms = useMemo(() => {
+    const w = ISOMETRIC_WIDTH_FACTOR * .5;
+    const z = biome.thickness * ISOMETRIC_THICKNESS;
+
+    return area.isometricSide(DIRECTIONS.BOTTOM)
+      .reduce((p, r) => p +
+        `M ${(r.l - r.t - 1) * w - bbox.l} ${(r.l + r.t + 1) * .5 - bbox.t - z} ` +
+        `v ${z} ` +
+        `L ${(r.r - r.b) * w - bbox.l} ${(r.r + r.b + 2) * .5 - bbox.t}` +
+        `v ${-z} ` +
+        `Z`, ''
+      );
+  }, [area, biome, bbox]);
+
   // Rendering
-  const w = ISOMETRIC_WIDTH_FACTOR * .5;
-  const z = biome.thickness * ISOMETRIC_THICKNESS;
-
   return (
-    <g id={`iso-side-${area.id}`} transform={`matrix(1, 0, 0, 1, ${-bbox.l}, ${-bbox.t})`}>
-      <g fill='red'>
-        { useMemo(() => area.isometricSide(DIRECTIONS.RIGHT), [area])
-          .map((r, i) => (
-            <path key={i} d={
-              `M ${(r.l - r.t + 1) * w} ${(r.l + r.t + 1) * .5 - z} ` +
-              `v ${z} ` +
-              `L ${(r.r - r.b) * w} ${(r.r + r.b + 2) * .5}` +
-              `v ${-z} ` +
-              `Z`
-            } />
-          ))
-        }
-      </g>
-
-      <g fill='purple'>
-        { useMemo(() => area.isometricSide(DIRECTIONS.BOTTOM), [area])
-          .map((r, i) => (
-            <path key={i} d={
-              `M ${(r.l - r.t - 1) * w} ${(r.l + r.t + 1) * .5 - z} ` +
-              `v ${z} ` +
-              `L ${(r.r - r.b) * w} ${(r.r + r.b + 2) * .5}` +
-              `v ${-z} ` +
-              `Z`
-            } />
-          ))
-        }
-      </g>
+    <g id={`iso-side-${area.id}`}>
+      <path d={rights} fill={biome.colors.shadow2} />
+      <path d={bottoms} fill={biome.colors.shadow1} />
     </g>
   );
 };
