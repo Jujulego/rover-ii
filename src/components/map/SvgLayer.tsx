@@ -1,40 +1,56 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, MouseEvent, useCallback, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
+import { BIOMES } from 'src/biomes';
+import { ISOMETRIC_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
 import { Layer as LayerData } from 'src/maps/layer';
-import { renderAsPaths } from 'src/maps/svg';
+import { Rect, Size, Vector } from 'src/utils/math2d';
 
 import { useLayer } from './layer.context';
-import { LayerMode } from './LayerContainer';
-import SvgFlatPath from './SvgFlatPath';
-import SvgIsometricPath from './SvgIsometricPath';
-import { Rect, Size } from '../../utils/math2d';
-import { BIOMES } from '../../biomes';
+import SvgFlatArea from './SvgFlatArea';
+import SvgIsometricArea from './SvgIsometricArea';
+import SvgIsometricSide from './SvgIsometricSide';
+import { Area } from '../../maps/area';
 
 // Types
 export interface SvgLayerProps {
   layer: LayerData;
-  mode: LayerMode;
+  onTileClick?: (position: Vector) => void;
 }
+
+// Styles
+const useStyles = makeStyles(({ transitions }) => ({
+  layer: {
+    transition: transitions.create('transform', { duration: transitions.duration.complex })
+  }
+}));
 
 // Component
 const SvgLayer: FC<SvgLayerProps> = (props) => {
-  const { layer, mode } = props;
+  const { layer, onTileClick } = props;
 
   // Context
-  const { tileSize } = useLayer();
+  const { center, container, mode, tileSize } = useLayer();
 
   // Memo
-  const paths = useMemo(() => {
-    let paths = renderAsPaths(layer);
+  const origin = useMemo(() => {
+    let rc = center.mul(tileSize);
 
     if (mode === 'isometric') {
-      paths = paths.sort(
-        (a, b) => BIOMES[a.biome].thickness - BIOMES[b.biome].thickness
-      );
+      const { x, y } = rc.add(tileSize * .5, tileSize * .5);
+      const wi = ISOMETRIC_WIDTH_FACTOR;
+      const z = tileSize;
+
+      rc.x = (x - y) * wi * .5;
+      rc.y = (x + y) * .5 - z;
+    } else {
+      rc = rc.add(tileSize, tileSize);
     }
 
-    return paths;
-  }, [layer, mode]);
+    return container.tl
+      .add(Vector.fromSize(container.size).div(2))
+      .sub(rc);
+  }, [center, container, mode, tileSize]);
 
   const { bbox, size } = useMemo(() => {
     const bbox = layer.bbox;
@@ -43,27 +59,90 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
     if (mode === 'flat') {
       return { bbox, size };
     } else {
-      const w = (size.w + 1) * Math.tan(Math.PI / 3);
+      const w = (size.w + 1) * ISOMETRIC_WIDTH_FACTOR;
       const h = size.h + 1;
 
       return {
         bbox: new Rect(-1, -w / 2, h, w / 2),
-        size: new Size(w, h)
+        size: new Size(w - 1, h)
       }
     }
   }, [layer, mode]);
 
+  const transform = useMemo(() => {
+    if (mode === 'flat') {
+      return `matrix(1, 0, 0, 1, -${.5 * tileSize}, -${.5 * tileSize})`;
+    } else {
+      const tile = layer.tile(center);
+      const z = tile ? BIOMES[tile.biome].thickness * ISOMETRIC_THICKNESS : 0;
+
+      return `matrix(1, 0, 0, 1, -${(size.w + 1) / 2 * tileSize}, -${(1.5 - z) * tileSize})`;
+    }
+  }, [center, layer, mode, size, tileSize]);
+
+  const [areas, floor] = useMemo(() => {
+    if (mode === 'isometric') {
+      const areas: Area[] = [];
+      const floor: Area[] = [];
+
+      for (const area of layer.areas) {
+        const biome = BIOMES[area.biome];
+
+        if (biome.thickness === 0) {
+          floor.push(area);
+        } else {
+          areas.push(area);
+        }
+      }
+
+      return [areas, floor];
+    }
+
+    return [layer.areas, []];
+  }, [layer, mode]);
+
+  // Callbacks
+  const handleClick = useCallback((event: MouseEvent) => {
+    // Compute tile coordinates
+    let pos = new Vector(event.clientX, event.clientY).sub(origin);
+
+    if (mode === 'isometric') {
+      const { x: xi, y: yi } = pos;
+      const wi = ISOMETRIC_WIDTH_FACTOR;
+
+      pos.x = yi + (xi / wi);
+      pos.y = yi - (xi / wi);
+    }
+
+    pos.x = Math.floor(pos.x / tileSize);
+    pos.y = Math.floor(pos.y / tileSize);
+
+    // Emit event
+    if (onTileClick) {
+      onTileClick(pos);
+    }
+  }, [mode, onTileClick, origin, tileSize]);
+
   // Render
-  const SvgPath = mode === 'flat' ? SvgFlatPath : SvgIsometricPath;
+  const styles = useStyles();
+  const SvgArea = mode === 'flat' ? SvgFlatArea : SvgIsometricArea;
 
   return (
-    <svg
+    <svg className={styles.layer}
       width={(size.w + 1) * tileSize}
       height={(size.h + 1) * tileSize}
       viewBox={`0 0 ${size.w + 1} ${size.h + 1}`}
+      style={{ transform }}
+      onClick={handleClick}
     >
-      { paths.map((path, i) => (
-        <SvgPath bbox={bbox} path={path.path} biome={path.biome} />
+      { floor.map(area => (
+        <SvgArea key={area.id} bbox={bbox} area={area} />
+      )) }
+      { mode === 'isometric' && areas.map(area => (
+        <SvgIsometricSide key={area.id} bbox={bbox} area={area} />
+      )) }
+      { areas.map(area => (
+        <SvgArea key={area.id} bbox={bbox} area={area} />
       )) }
     </svg>
   );

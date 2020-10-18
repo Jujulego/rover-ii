@@ -22,8 +22,8 @@ const MiniMap: FC<MiniMapProps> = (props) => {
 
   // Render
   return (
-    <LayerContainer {...container} tileSize={SIZE}>
-      <SvgLayer layer={layer} mode="flat" />
+    <LayerContainer {...container} tileSize={SIZE} mode="flat">
+      <SvgLayer layer={layer} />
     </LayerContainer>
   )
 };

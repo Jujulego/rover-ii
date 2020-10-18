@@ -44,14 +44,7 @@ const AppBar = (props: AppBarProps) => {
 
   return (
     <div className={styles.root}>
-      <MuiAppBar className={styles.appBar} position="fixed">
-        <Toolbar>
-          <Typography className={styles.title} variant="h6">Rover</Typography>
-          <ThemeButton color="inherit" />
-        </Toolbar>
-      </MuiAppBar>
       <main className={styles.content}>
-        <Toolbar disableGutters />
         { children }
       </main>
     </div>

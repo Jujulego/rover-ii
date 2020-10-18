@@ -1,19 +1,18 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 
 import { Layer as LayerData } from 'src/maps/layer';
 import { Vector } from 'src/utils/math2d';
 
-import Layer from './Layer';
-import LayerContainer, { LayerMode } from './LayerContainer';
-import FlatTile from './FlatTile';
-import IsometricTile from './IsometricTile';
+import { LayerMode } from './layer.context';
+import LayerContainer from './LayerContainer';
+import SvgLayer from './SvgLayer';
 
 // Types
 export interface MapProps {
   layer: LayerData;
   center?: Vector;
   zoom?: number;
-  mode?: LayerMode
+  mode?: LayerMode;
 
   onTileClick?: (position: Vector) => void;
 }
@@ -26,22 +25,10 @@ const Map: FC<MapProps> = (props) => {
     onTileClick
   } = props;
 
-  // Memo
-  const Tile = useMemo(() => mode === 'isometric' ? IsometricTile : FlatTile, [mode]);
-
   // Render
   return (
     <LayerContainer tileSize={64} center={center} zoom={zoom} mode={mode}>
-      <Layer layer={layer}>
-        { tile => (
-          <Tile key={`${tile.pos.x},${tile.pos.y}`}
-            x={tile.pos.x}
-            y={tile.pos.y}
-            biome={tile.biome}
-            onClick={onTileClick}
-          />
-        ) }
-      </Layer>
+      <SvgLayer layer={layer} onTileClick={onTileClick} />
     </LayerContainer>
   );
 };
