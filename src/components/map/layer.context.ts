@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, MouseEvent, useContext } from 'react';
 
 import { NULL_VECTOR, Vector, NULL_RECT, Rect } from 'src/utils/math2d';
 
@@ -10,6 +10,7 @@ export interface LayerContextProps {
   center: Vector;
   container: Rect;
   tileSize: number;
+  computeMouseTile: (event: MouseEvent) => Vector;
 }
 
 // Defaults
@@ -17,7 +18,8 @@ const layerDefaults: LayerContextProps = {
   mode: 'flat',
   center: NULL_VECTOR,
   container: NULL_RECT,
-  tileSize: 0
+  tileSize: 0,
+  computeMouseTile: () => NULL_VECTOR
 };
 
 // Context

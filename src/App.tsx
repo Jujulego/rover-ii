@@ -21,9 +21,9 @@ const useStyle = makeStyles(({ spacing }) => ({
 const App = () => {
   // Memo
   const layer = useMemo(() => Generators.cellularLayer(
-    { h: 40, w: 40 },
+    { h: 100, w: 100 },
     { grass: .4, sand: .2 },
-    { seed: 'toto', iterations: 5, emptyBiome: 'water' }
+    { seed: 'toto', iterations: 7, emptyBiome: 'water' }
   ), []);
 
   // Render
@@ -31,10 +31,10 @@ const App = () => {
 
   return (
     <AppLayout>
-      {/*<Navigator className={styles.navigator} layer={layer} />*/}
-      <LayerContainer tileSize={16} center={new Vector(20, 20)} mode="isometric">
-        <SvgLayer layer={layer} />
-      </LayerContainer>
+      <Navigator className={styles.navigator} layer={layer} />
+      {/*<LayerContainer tileSize={16} center={new Vector(20, 20)} mode="isometric">*/}
+      {/*  <SvgLayer layer={layer} />*/}
+      {/*</LayerContainer>*/}
     </AppLayout>
   );
 };

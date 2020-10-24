@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { BIOMES } from 'src/biomes';
 import { ISOMETRIC_THICKNESS, ISOMETRIC_WIDTH_FACTOR } from 'src/constants';
+import { Area } from 'src/maps/area';
 import { Layer as LayerData } from 'src/maps/layer';
 import { Rect, Size, Vector } from 'src/utils/math2d';
 
@@ -10,7 +11,6 @@ import { useLayer } from './layer.context';
 import SvgFlatArea from './SvgFlatArea';
 import SvgIsometricArea from './SvgIsometricArea';
 import SvgIsometricSide from './SvgIsometricSide';
-import { Area } from '../../maps/area';
 
 // Types
 export interface SvgLayerProps {
@@ -30,28 +30,9 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   const { layer, onTileClick } = props;
 
   // Context
-  const { center, container, mode, tileSize } = useLayer();
+  const { center, mode, tileSize, computeMouseTile } = useLayer();
 
   // Memo
-  const origin = useMemo(() => {
-    let rc = center.mul(tileSize);
-
-    if (mode === 'isometric') {
-      const { x, y } = rc.add(tileSize * .5, tileSize * .5);
-      const wi = ISOMETRIC_WIDTH_FACTOR;
-      const z = tileSize;
-
-      rc.x = (x - y) * wi * .5;
-      rc.y = (x + y) * .5 - z;
-    } else {
-      rc = rc.add(tileSize, tileSize);
-    }
-
-    return container.tl
-      .add(Vector.fromSize(container.size).div(2))
-      .sub(rc);
-  }, [center, container, mode, tileSize]);
-
   const { bbox, size } = useMemo(() => {
     const bbox = layer.bbox;
     const size = bbox.size;
@@ -103,25 +84,11 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
 
   // Callbacks
   const handleClick = useCallback((event: MouseEvent) => {
-    // Compute tile coordinates
-    let pos = new Vector(event.clientX, event.clientY).sub(origin);
-
-    if (mode === 'isometric') {
-      const { x: xi, y: yi } = pos;
-      const wi = ISOMETRIC_WIDTH_FACTOR;
-
-      pos.x = yi + (xi / wi);
-      pos.y = yi - (xi / wi);
-    }
-
-    pos.x = Math.floor(pos.x / tileSize);
-    pos.y = Math.floor(pos.y / tileSize);
-
     // Emit event
     if (onTileClick) {
-      onTileClick(pos);
+      onTileClick(computeMouseTile(event));
     }
-  }, [mode, onTileClick, origin, tileSize]);
+  }, [onTileClick, computeMouseTile]);
 
   // Render
   const styles = useStyles();
