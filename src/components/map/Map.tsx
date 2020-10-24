@@ -20,7 +20,7 @@ export interface MapProps {
 // Component
 const Map: FC<MapProps> = (props) => {
   const {
-    layer,
+    layer, children,
     center, zoom, mode = 'isometric',
     onTileClick
   } = props;
@@ -29,6 +29,7 @@ const Map: FC<MapProps> = (props) => {
   return (
     <LayerContainer tileSize={64} center={center} zoom={zoom} mode={mode}>
       <SvgLayer layer={layer} onTileClick={onTileClick} />
+      { children }
     </LayerContainer>
   );
 };

@@ -8,6 +8,7 @@ import { Vector } from 'src/utils/math2d';
 
 import Map from './map/Map';
 import MiniMap from './map/MiniMap';
+import MouseCoordinates from './map/MouseCoordinates';
 
 // Styles
 const useStyle = makeStyles(({ spacing, shadows, transitions }) => ({
@@ -74,7 +75,9 @@ const Navigator: FC<NavigatorProps> = (props) => {
   return (
     <div className={clsx(styles.container, className)}>
       <div className={styles.map}>
-        <Map layer={layer} center={center} onTileClick={setCenter} mode="isometric" />
+        <Map layer={layer} center={center} onTileClick={setCenter} mode="isometric">
+          <MouseCoordinates />
+        </Map>
       </div>
 
       <div

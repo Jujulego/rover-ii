@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -91,7 +91,7 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   }, []);
 
   // Callbacks
-  const computeMouseTile = useCallback((event: MouseEvent): Vector => {
+  const computeMouseCoord = useCallback((event: MouseEvent | React.MouseEvent): Vector => {
     // Compute tile coordinates
     const pos = new Vector(event.clientX, event.clientY).sub(origin);
 
@@ -103,8 +103,8 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
       pos.y = yi - (xi / wi);
     }
 
-    pos.x = Math.floor(pos.x / tileSize);
-    pos.y = Math.floor(pos.y / tileSize);
+    pos.x = Math.ceil(pos.x / tileSize);
+    pos.y = Math.ceil(pos.y / tileSize);
 
     return pos;
   }, [mode, origin, tileSize]);
@@ -137,7 +137,11 @@ const LayerContainer: FC<LayerContainerProps> = (props) => {
   return (
     <div ref={handleContainerRef} className={styles.container}>
       <div className={styles.map} style={{ transform: matrix }}>
-        <LayerContext.Provider value={{ mode, center, container, tileSize, computeMouseTile }}>
+        <LayerContext.Provider value={{
+          mode,
+          center, container, tileSize,
+          computeMouseCoord
+        }}>
           { children }
         </LayerContext.Provider>
       </div>

@@ -30,7 +30,7 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   const { layer, onTileClick } = props;
 
   // Context
-  const { center, mode, tileSize, computeMouseTile } = useLayer();
+  const { center, mode, tileSize, computeMouseCoord } = useLayer();
 
   // Memo
   const { bbox, size } = useMemo(() => {
@@ -86,9 +86,9 @@ const SvgLayer: FC<SvgLayerProps> = (props) => {
   const handleClick = useCallback((event: MouseEvent) => {
     // Emit event
     if (onTileClick) {
-      onTileClick(computeMouseTile(event));
+      onTileClick(computeMouseCoord(event));
     }
-  }, [onTileClick, computeMouseTile]);
+  }, [onTileClick, computeMouseCoord]);
 
   // Render
   const styles = useStyles();
